@@ -1,5 +1,7 @@
+import LoginRegisterTabs from "@/components/welcome/welcome.tabs.component";
+
 const WelcomePage = () => {
-  return <p>Welcome Page</p>;
+  return <LoginRegisterTabs />;
 };
 
 export default WelcomePage;

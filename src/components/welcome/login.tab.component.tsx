@@ -9,13 +9,13 @@
 */
 "use client";
 
-import { Button, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import { FormValuesSchema, FormValuesType } from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 
-const Login = () => {
+const LoginTabPanel = () => {
   // 1. Initialize all variables or constants
   const initialValues: FormValuesType = {
     email: "",
@@ -36,12 +36,11 @@ const Login = () => {
   });
 
   return (
-    <Paper
+    <Box
       sx={{
         borderRadius: 5,
-        height: "100vh",
-        px: 4,
-        py: 4,
+        px: 1,
+        py: 2,
       }}
     >
       <form onSubmit={formik.handleSubmit}>
@@ -52,7 +51,6 @@ const Login = () => {
             required
             id="email"
             name="email"
-            autoFocus
             variant="outlined"
             value={formik.values.email}
             onChange={formik.handleChange}
@@ -87,12 +85,18 @@ const Login = () => {
           </Typography>
         </Link>
 
-        <Button type="submit" color="primary" variant="contained" fullWidth>
+        <Button
+          type="submit"
+          color="primary"
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2 }}
+        >
           Sign In
         </Button>
       </form>
-    </Paper>
+    </Box>
   );
 };
 
-export default Login;
+export default LoginTabPanel;

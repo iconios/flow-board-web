@@ -1,20 +1,53 @@
 import NavBar from "@/components/NavBar";
-import { Container, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 
 const TabsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Container
-      fixed
-      sx={{ borderColor: "red", borderWidth: 2, borderStyle: "solid" }}
+    <Box
+      sx={{
+        justifyContent: { xs: "normal", md: "center" },
+        alignItems: { xs: "normal", md: "center" },
+        display: "flex",
+        minHeight: "100vh",
+        p: { xs: 0 },
+      }}
     >
-      <Paper>
+      <Paper
+        sx={{
+          borderColor: "red",
+          borderWidth: 2,
+          borderStyle: "solid",
+          borderRadius: 2,
+          p: { xs: 0 },
+          width: { xs: "100%", md: "70%" },
+          display: "flex",
+          flexDirection: "column",
+          minHeight: { xs: "100vh", md: "auto" },
+        }}
+      >
         <NavBar />
-        <Typography variant="h2" align="center" sx={{ pt: 4 }}>
-          Account Managment
-        </Typography>
-        {children}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: { xs: "center", md: "flex-start" },
+            alignItems: "center",
+            flex: 1,
+            minHeight: { xs: "calc(100vh - 64px)", md: "auto" },
+            p: { xs: 0 },
+          }}
+        >
+          <Typography
+            variant="h6"
+            align="center"
+            sx={{ py: { xs: 1, sm: 4 }, fontWeight: "bold" }}
+          >
+            Account Managment
+          </Typography>
+          {children}
+        </Box>
       </Paper>
-    </Container>
+    </Box>
   );
 };
 

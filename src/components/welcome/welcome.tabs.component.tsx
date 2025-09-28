@@ -1,15 +1,12 @@
 "use client";
 
-import { LinkTabPropsType, LinkTabProps } from "@/lib/types";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Paper, Tab, Tabs } from "@mui/material";
 import React, { useState } from "react";
+import LoginTabPanel from "./login.tab.component";
+import RegisterTabPanel from "./register.tab.component";
 
 const LoginRegisterTabs = () => {
-  const [value, setValue] = useState(0);
-
-  const LinkTab = ({ label, href, selected }: LinkTabPropsType) => {
-    return <Tab LinkComponent="a" {...LinkTabProps} />;
-  };
+  const [value, setValue] = useState<string>("login");
 
   const samePageLinkNavigation = (
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -28,7 +25,7 @@ const LoginRegisterTabs = () => {
   };
 
   // Create the tab change handler
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     if (
       event.type !== "click" ||
       (event.type === "click" &&
@@ -40,18 +37,47 @@ const LoginRegisterTabs = () => {
     }
   };
 
+  // Tab contents
+  const tabContents: { [key: string]: React.JSX.Element } = {
+    login: <LoginTabPanel />,
+    register: <RegisterTabPanel />,
+  };
+
   return (
-    <Box sx={{ width: "100%" }}>
+    <Paper
+      sx={{
+        width: { xs: "100%", sm: "70%" },
+        mx: { xs: 0, sm: "auto" },
+        mb: 2,
+        borderRadius: 2,
+        borderColor: "black",
+        borderWidth: 2,
+        borderStyle: "solid",
+      }}
+    >
       <Tabs
         value={value}
         onChange={handleChange}
         aria-label="nav tabs"
         aria-labelledby="navigation"
+        centered
+        variant="fullWidth"
       >
-        <LinkTab label="Login" href="/login" />
-        <LinkTab label="Register" href="#" />
+        <Tab value="login" label="Login" />
+        <Tab value="register" label="Register" />
       </Tabs>
-    </Box>
+
+      <Box
+        sx={{
+          borderColor: "yellow",
+          borderWidth: 2,
+          borderStyle: "solid",
+          borderRadius: 2,
+        }}
+      >
+        {tabContents[value]}
+      </Box>
+    </Paper>
   );
 };
 
