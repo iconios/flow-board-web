@@ -3,19 +3,38 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev:full": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd C:\\Users\\hp\\Documents\\Portfolio\\FlowBoard\\Backend && npm run dev",
+    "dev:client": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "eslint": "npx eslint .",
+    "pretty": "npx prettier . --write"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.2",
+    "@mui/material": "^7.3.2",
+    "@mui/material-nextjs": "^7.3.2",
+    "dotenv": "^17.2.2",
+    "formik": "^2.4.6",
+    "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.3"
+    "zod": "^4.1.11",
+    "zod-formik-adapter": "^2.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/js": "^9.36.0",
     "@types/node": "^20",
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.36.0",
+    "prettier": "3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.0"
   }
 }
