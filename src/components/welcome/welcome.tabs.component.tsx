@@ -50,9 +50,6 @@ const LoginRegisterTabs = () => {
         mx: { xs: 0, sm: "auto" },
         mb: 2,
         borderRadius: 2,
-        borderColor: "black",
-        borderWidth: 2,
-        borderStyle: "solid",
       }}
     >
       <Tabs
@@ -69,9 +66,6 @@ const LoginRegisterTabs = () => {
 
       <Box
         sx={{
-          borderColor: "yellow",
-          borderWidth: 2,
-          borderStyle: "solid",
           borderRadius: 2,
         }}
       >

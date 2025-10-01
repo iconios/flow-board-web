@@ -1,7 +1,7 @@
 import NavBar from "@/components/NavBar";
 import { Box, Paper, Typography } from "@mui/material";
 
-const TabsLayout = ({ children }: { children: React.ReactNode }) => {
+const BoardsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
       sx={{
@@ -31,7 +31,7 @@ const TabsLayout = ({ children }: { children: React.ReactNode }) => {
             alignItems: "center",
             flex: 1,
             minHeight: { xs: "calc(100vh - 64px)", md: "auto" },
-            p: { xs: 0 },
+            p: { xs: 0, sm: 4 },
           }}
         >
           <Typography
@@ -39,7 +39,7 @@ const TabsLayout = ({ children }: { children: React.ReactNode }) => {
             align="center"
             sx={{ py: { xs: 1, sm: 4 }, fontWeight: "bold" }}
           >
-            Account Managment
+            My Boards
           </Typography>
           {children}
         </Box>
@@ -48,4 +48,4 @@ const TabsLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default TabsLayout;
+export default BoardsLayout;

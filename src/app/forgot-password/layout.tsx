@@ -1,13 +1,14 @@
 import NavBar from "@/components/NavBar";
 import { Box, Paper, Typography } from "@mui/material";
+import React from "react";
 
-const TabsLayout = ({ children }: { children: React.ReactNode }) => {
+const ForgotPasswordLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
       sx={{
-        justifyContent: { xs: "normal", md: "center" },
-        alignItems: { xs: "normal", md: "center" },
         display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         minHeight: "100vh",
         p: { xs: 0 },
       }}
@@ -27,25 +28,38 @@ const TabsLayout = ({ children }: { children: React.ReactNode }) => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            justifyContent: { xs: "center", md: "flex-start" },
+            justifyContent: "center",
             alignItems: "center",
-            flex: 1,
-            minHeight: { xs: "calc(100vh - 64px)", md: "auto" },
-            p: { xs: 0 },
+            flexGrow: 1,
+            py: { xs: 1, sm: 3 },
+            px: { xs: 1, sm: 3 },
           }}
         >
           <Typography
             variant="h6"
             align="center"
-            sx={{ py: { xs: 1, sm: 4 }, fontWeight: "bold" }}
+            sx={{
+              mb: 3, // Consistent margin bottom instead of py
+              fontWeight: "bold",
+              width: "100%",
+            }}
           >
-            Account Managment
+            Forgot Password
           </Typography>
-          {children}
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {children}
+          </Box>
         </Box>
       </Paper>
     </Box>
   );
 };
 
-export default TabsLayout;
+export default ForgotPasswordLayout;

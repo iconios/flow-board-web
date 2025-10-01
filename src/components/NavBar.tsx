@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
+import Link from "next/link";
 
 const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -30,7 +31,6 @@ const NavBar = () => {
   };
 
   const handleLogin = () => {
-    // TODO: wire up navigation or auth logic
     console.log("Login clicked");
     handleMenuClose();
   };
@@ -91,21 +91,23 @@ const NavBar = () => {
           {!isMobile ? (
             /* Desktop View */
             <Box>
-              <Button
-                variant="contained"
-                size="medium"
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 600,
-                  bgcolor: "primary.main",
-                  ":hover": { bgcolor: "secondary.main" },
-                  fontSize: { sm: "0.9rem", md: "1rem" },
-                  px: 3,
-                }}
-                onClick={handleLogin}
-              >
-                Login
-              </Button>
+              <Link href={"/welcome"}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                    bgcolor: "primary.main",
+                    ":hover": { bgcolor: "primary.dark" },
+                    fontSize: { sm: "0.9rem", md: "1rem" },
+                    px: 3,
+                  }}
+                  onClick={handleLogin}
+                >
+                  Login
+                </Button>
+              </Link>
             </Box>
           ) : (
             /* Mobile View */
@@ -127,7 +129,20 @@ const NavBar = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
-                <MenuItem onClick={handleLogin}>Login</MenuItem>
+                <MenuItem onClick={handleLogin} sx={{ p: 0 }}>
+                  <Link href={"/welcome"}>
+                    <Button
+                      sx={{
+                        bgcolor: "primary.main",
+                        color: "primary.contrastText",
+                        ":hover": { bgcolor: "primary.dark" },
+                        m: 0,
+                      }}
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                </MenuItem>
               </Menu>
             </Box>
           )}

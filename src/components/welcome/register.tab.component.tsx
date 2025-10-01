@@ -9,26 +9,61 @@
 */
 "use client";
 
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  TextField,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import { RegisterFormValuesSchema, RegisterFormValuesType } from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import Link from "next/link";
+import React, { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { SignUp } from "@/actions/auth";
 
 const RegisterTabPanel = () => {
   // 1. Initialize all variables or constants
+  const [checked, setChecked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [serverMessage, setServerMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<unknown>("");
   const initialValues: RegisterFormValuesType = {
     firstname: "",
     lastname: "",
     email: "",
     password: "",
   };
-  const handleFormSubmit = (
+  const handleFormSubmit = async (
     values: RegisterFormValuesType,
     { setSubmitting, resetForm }: FormikHelpers<RegisterFormValuesType>,
   ) => {
     console.log(values);
-    setSubmitting(false);
+    try {
+      const result = await SignUp(values);
+      console.log("Server message", result.message)
+      setServerMessage(result.message);
+      setSubmitting(false);
+      resetForm();
+    } catch (error: unknown) {
+      console.error("Server error", error);
+      setErrorMessage(error);
+    }
+  };
+
+  const handleShowPasswordClick = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
   };
 
   const formik = useFormik({
@@ -45,6 +80,12 @@ const RegisterTabPanel = () => {
         py: 2,
       }}
     >
+      {serverMessage && (
+        <Typography variant="body1" color="primary.success">
+          {serverMessage}
+        </Typography>
+      )}
+
       <form onSubmit={formik.handleSubmit}>
         <Stack direction="column">
           <Stack direction={{ sm: "column", md: "row" }} spacing={2}>
@@ -95,7 +136,7 @@ const RegisterTabPanel = () => {
           />
 
           <TextField
-            type="password"
+            type={showPassword ? "text" : "password"}
             label="Password"
             required
             id="password"
@@ -106,19 +147,53 @@ const RegisterTabPanel = () => {
             onBlur={formik.handleBlur}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleShowPasswordClick}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
         </Stack>
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="large"
+              checked={checked}
+              required
+              aria-label="Terms of service checkbox"
+              onChange={() => setChecked(!checked)}
+              sx={{ pt: 2 }}
+            />
+          }
+          label="I agree to the Terms of Service and Privacy Policy"
+        />
 
         <Button
           type="submit"
           color="primary"
           variant="contained"
           fullWidth
-          sx={{ mt: 4 }}
+          sx={{ mt: 2 }}
+          disabled={!checked}
         >
           Sign Up
         </Button>
       </form>
+      <Typography variant="body2" sx={{ pt: 2 }} align="center">
+        Already have an account? Log in
+      </Typography>
     </Box>
   );
 };

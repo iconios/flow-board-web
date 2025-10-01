@@ -9,14 +9,25 @@
 */
 "use client";
 
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import { FormValuesSchema, FormValuesType } from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
+import { useState } from "react";
 
 const LoginTabPanel = () => {
   // 1. Initialize all variables or constants
+  const [showPassword, setShowPassword] = useState(false);
   const initialValues: FormValuesType = {
     email: "",
     password: "",
@@ -27,6 +38,17 @@ const LoginTabPanel = () => {
   ) => {
     console.log(values);
     setSubmitting(false);
+    resetForm();
+  };
+
+  const handleShowPasswordClick = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
   };
 
   const formik = useFormik({
@@ -60,7 +82,7 @@ const LoginTabPanel = () => {
           />
 
           <TextField
-            type="password"
+            type={showPassword ? "text" : "password"}
             label="Password"
             required
             id="password"
@@ -71,14 +93,31 @@ const LoginTabPanel = () => {
             onBlur={formik.handleBlur}
             error={formik.touched.password && Boolean(formik.errors.password)}
             helperText={formik.touched.password && formik.errors.password}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleShowPasswordClick}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
         </Stack>
 
-        <Link href={""}>
+        <Link href={"/forgot-password"} style={{ textDecoration: "none" }}>
           <Typography
             color="primary"
             align="right"
-            variant="body1"
+            variant="body2"
+            component="p"
             sx={{ py: 2 }}
           >
             Forgot Password?
