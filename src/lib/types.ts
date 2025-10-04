@@ -190,3 +190,51 @@ const OnlyUserTokenSchema = UserDataSchema.pick({
 export type OnlyUserDataType = z.infer<typeof OnlyUserDataSchema>;
 
 export type OnlyUserTokenType = z.infer<typeof OnlyUserTokenSchema>;
+
+const GetBoardsServerResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  boards: z
+    .array(
+      z.object({
+        title: z.string(),
+        bg_color: z.string(),
+        user_id: z.object({
+          email: z.string(),
+          firstname: z.string(),
+        }),
+        created_at: z.string(),
+        updated_at: z.string(),
+        lists: z.array(z.string()),
+        _id: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
+export type GetBoardsServerResponseType = z.infer<
+  typeof GetBoardsServerResponseSchema
+>;
+
+const BoardsSchema = z.object({
+  boardId: z.string().optional(),
+  bgColor: z.string(),
+  user: z.object({
+    firstname: z.string(),
+    email: z.string(),
+  }),
+  title: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export type BoardsType = z.infer<typeof BoardsSchema>;
+
+const GetBoardsOutputSchema = z.object({
+  error: z.boolean(),
+  message: z.string(),
+  data: z.array(BoardsSchema).optional(),
+});
+
+export type GetBoardsOutputType = z.infer<typeof GetBoardsOutputSchema>;
+export type BoardsForClient = z.infer<typeof GetBoardsOutputSchema>["data"];

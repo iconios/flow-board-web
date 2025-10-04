@@ -16,24 +16,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-//import { io } from "socket.io-client";
 import { FormikHelpers, useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { useRouter } from "next/navigation";
 
 const CreateBoardButton = () => {
   // Initialize the variables and constants
-  //const socket = io();
-  const { user } = useUserContext();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!user.email) {
-      router.push("/welcome");
-    }
-  }, [user, router]);
-
   const [open, setOpen] = useState(false);
 
   const handleDialogClose = () => {
@@ -66,7 +54,13 @@ const CreateBoardButton = () => {
   });
 
   return (
-    <Paper>
+    <Paper
+      sx={{
+        width: { xs: "100%", sm: "33.33%", md: "25%" },
+        mb: 2,
+        mt: 2
+      }}
+    >
       <Box>
         <IconButton onClick={handleDialogOpen}>
           <Add />

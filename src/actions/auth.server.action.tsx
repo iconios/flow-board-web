@@ -72,7 +72,10 @@ const LoginServerAction = async ({
       message: "Server Url is required",
     };
   }
-
+  console.log("Login server action called", {
+    email,
+    password
+  })
   try {
     const response = await fetch(`${SERVER_BASE_URL}/auth/login`, {
       method: "POST",
