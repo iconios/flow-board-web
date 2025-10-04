@@ -58,7 +58,7 @@ const CreateBoardButton = () => {
       sx={{
         width: { xs: "100%", sm: "33.33%", md: "25%" },
         mb: 2,
-        mt: 2
+        mt: 2,
       }}
     >
       <Box>

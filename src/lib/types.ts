@@ -107,6 +107,7 @@ const SignUpAuthOutputSchema = z.object({
 });
 
 export type SignUpAuthOutputType = z.infer<typeof SignUpAuthOutputSchema>;
+export type DeleteBoardOutputType = z.infer<typeof SignUpAuthOutputSchema>;
 
 const SignUpAuthServerResponseSchema = z.object({
   success: z.boolean(),
@@ -238,3 +239,60 @@ const GetBoardsOutputSchema = z.object({
 
 export type GetBoardsOutputType = z.infer<typeof GetBoardsOutputSchema>;
 export type BoardsForClient = z.infer<typeof GetBoardsOutputSchema>["data"];
+
+const UpdateBoardServerResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  board: z
+    .object({
+      id: z.string(),
+      title: z.string(),
+      bg_color: z.string(),
+    })
+    .optional(),
+});
+
+export type UpdateBoardServerResponseType = z.infer<
+  typeof UpdateBoardServerResponseSchema
+>;
+
+const DeleteBoardServerResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  boards: z
+    .array(
+      z.object({
+        _id: z.string().optional(),
+        title: z.string(),
+        bg_color: z.string(),
+        user_id: z.string(),
+        created_at: z.iso.datetime(),
+        updated_at: z.iso.datetime(),
+        lists: z.array(z.string()),
+      }),
+    )
+    .optional(),
+});
+
+export type DeleteBoardServerResponseType = z.infer<
+  typeof DeleteBoardServerResponseSchema
+>;
+
+const UpdateBoardOutputSchema = SignUpAuthOutputSchema.extend({
+  data: z
+    .object({
+      boardId: z.string(),
+      title: z.string(),
+      bgColor: z.string(),
+    })
+    .optional(),
+});
+
+export type UpdateBoardOutputType = z.infer<typeof UpdateBoardOutputSchema>;
+
+const UpdateObjectSchema = z.object({
+  title: z.string().optional(),
+  bg_color: z.string().optional(),
+});
+
+export type UpdateObjectType = z.infer<typeof UpdateObjectSchema>;

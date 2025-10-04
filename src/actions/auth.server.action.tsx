@@ -74,8 +74,8 @@ const LoginServerAction = async ({
   }
   console.log("Login server action called", {
     email,
-    password
-  })
+    password,
+  });
   try {
     const response = await fetch(`${SERVER_BASE_URL}/auth/login`, {
       method: "POST",

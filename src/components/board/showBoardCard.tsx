@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 
 const BoardCard = ({ backgroundColor, userName, title }: BoardCardType) => {
+  // 1. Initialize the variables or constants
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -25,6 +26,16 @@ const BoardCard = ({ backgroundColor, userName, title }: BoardCardType) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleEditClick = () => {
+    //
+    handleMenuClose();
+  };
+
+  const handleDeleteClick = () => {
+    //
+    handleMenuClose();
   };
 
   return (
@@ -40,11 +51,11 @@ const BoardCard = ({ backgroundColor, userName, title }: BoardCardType) => {
         border: "2px solid red",
         flexShrink: 0,
         flexBasis: {
-          xs: "100%",  
+          xs: "100%",
           sm: "calc(50% - 8px)",
-          md: "calc(33.333% - 4px)", 
-          lg: "calc(23% - 2px)"
-        }
+          md: "calc(33.333% - 4px)",
+          lg: "calc(23% - 2px)",
+        },
       }}
     >
       {/* Color Header */}
@@ -151,7 +162,7 @@ const BoardCard = ({ backgroundColor, userName, title }: BoardCardType) => {
         }}
       >
         <MenuItem
-          onClick={handleMenuClose}
+          onClick={handleEditClick}
           sx={{
             py: isMobile ? 1 : 1.5,
             fontSize: isMobile ? "0.875rem" : "1rem",
@@ -167,7 +178,7 @@ const BoardCard = ({ backgroundColor, userName, title }: BoardCardType) => {
           Edit board
         </MenuItem>
         <MenuItem
-          onClick={handleMenuClose}
+          onClick={handleDeleteClick}
           sx={{
             py: isMobile ? 1 : 1.5,
             fontSize: isMobile ? "0.875rem" : "1rem",

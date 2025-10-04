@@ -13,9 +13,8 @@ import CreateBoardButton from "@/components/board/createBoardButton";
 import BoardCard from "@/components/board/showBoardCard";
 import { BoardsType } from "@/lib/types";
 import { useUserContext } from "@/lib/user.context";
-import { Box, Container, Paper, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
 import NotificationBar from "@/lib/notificationBar";
 
@@ -95,21 +94,22 @@ const BoardsPage = () => {
         <Box
           sx={{
             borderStyle: "solid",
-                  borderWidth: "2px",
-                  borderColor: "black",
+            borderWidth: "2px",
+            borderColor: "black",
           }}
         >
           <Box
-              display="flex"
-              flexDirection= {{ xs: "column", sm: "row" }}
-              flexWrap="wrap"
-              justifyContent= "space-between"
-              alignItems= "stretch"
-              gap= {2}
-              sx={{
+            display="flex"
+            flexDirection={{ xs: "column", sm: "row" }}
+            flexWrap="wrap"
+            justifyContent="space-around"
+            alignItems="stretch"
+            gap={2}
+            sx={{
               borderStyle: "solid",
               borderWidth: "2px",
-              borderColor: "blue",             
+              borderColor: "blue",
+              mb: 4,
             }}
           >
             {boards.map((board) => (
@@ -117,7 +117,7 @@ const BoardsPage = () => {
                 backgroundColor={board.bgColor}
                 title={board.title}
                 userName={board.user.firstname}
-                key={uuidv4()}
+                key={board.boardId}
               />
             ))}
           </Box>
