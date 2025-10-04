@@ -16,8 +16,10 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import Link from "next/link";
+import { useUserContext } from "@/lib/user.context";
 
 const NavBar = () => {
+  const { user, LogOut } = useUserContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -33,6 +35,12 @@ const NavBar = () => {
   const handleLogin = () => {
     console.log("Login clicked");
     handleMenuClose();
+  };
+
+  const handleLogout = () => {
+    console.log("Logout clicked");
+    handleMenuClose();
+    LogOut();
   };
 
   return (
@@ -91,7 +99,7 @@ const NavBar = () => {
           {!isMobile ? (
             /* Desktop View */
             <Box>
-              <Link href={"/welcome"}>
+              <Link href={user.email ? "" : "/welcome"}>
                 <Button
                   variant="contained"
                   size="small"
@@ -103,9 +111,9 @@ const NavBar = () => {
                     fontSize: { sm: "0.9rem", md: "1rem" },
                     px: 3,
                   }}
-                  onClick={handleLogin}
+                  onClick={user ? handleLogout : handleLogin}
                 >
-                  Login
+                  {user.email ? "Logout" : "Login"}
                 </Button>
               </Link>
             </Box>
@@ -129,8 +137,11 @@ const NavBar = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
-                <MenuItem onClick={handleLogin} sx={{ p: 0 }}>
-                  <Link href={"/welcome"}>
+                <MenuItem
+                  onClick={user.email ? handleLogout : handleLogin}
+                  sx={{ p: 0 }}
+                >
+                  <Link href={user.email ? "" : "/welcome"}>
                     <Button
                       sx={{
                         bgcolor: "primary.main",
@@ -139,7 +150,7 @@ const NavBar = () => {
                         m: 0,
                       }}
                     >
-                      Login
+                      {user.email ? "Logout" : "Login"}
                     </Button>
                   </Link>
                 </MenuItem>

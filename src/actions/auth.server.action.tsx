@@ -9,12 +9,10 @@ import {
   SignUpAuthOutputType,
   SignUpAuthServerResponseType,
 } from "@/lib/types";
-import * as dotenv from "dotenv";
-dotenv.config();
 
 const SERVER_BASE_URL = process.env.SERVER_BASE_URL;
 
-const SignUp = async ({
+const SignUpServerAction = async ({
   firstname,
   lastname,
   email,
@@ -64,7 +62,7 @@ const SignUp = async ({
   }
 };
 
-const Login = async ({
+const LoginServerAction = async ({
   email,
   password,
 }: FormValuesType): Promise<LoginAuthOutputType> => {
@@ -117,7 +115,7 @@ const Login = async ({
   }
 };
 
-const ForgotPassword = async ({
+const ForgotPasswordServerAction = async ({
   email,
 }: ForgotPasswordType): Promise<SignUpAuthOutputType> => {
   if (!SERVER_BASE_URL) {
@@ -161,4 +159,4 @@ const ForgotPassword = async ({
   }
 };
 
-export { Login, SignUp, ForgotPassword };
+export { LoginServerAction, SignUpServerAction, ForgotPasswordServerAction };

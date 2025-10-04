@@ -21,18 +21,24 @@ import {
   IconButton,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
-import { RegisterFormValuesSchema, RegisterFormValuesType } from "@/lib/types";
+import {
+  NotificationBarType,
+  RegisterFormValuesSchema,
+  RegisterFormValuesType,
+} from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import React, { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { SignUp } from "@/actions/auth";
+import { SignUpServerAction } from "@/actions/auth.server.action";
+import NotificationBar from "@/lib/notificationBar";
 
 const RegisterTabPanel = () => {
   // 1. Initialize all variables or constants
   const [checked, setChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [serverMessage, setServerMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState<unknown>("");
+  const [notification, setNotification] = useState<NotificationBarType | null>(
+    null,
+  );
   const initialValues: RegisterFormValuesType = {
     firstname: "",
     lastname: "",
@@ -44,15 +50,32 @@ const RegisterTabPanel = () => {
     { setSubmitting, resetForm }: FormikHelpers<RegisterFormValuesType>,
   ) => {
     console.log(values);
+
     try {
-      const result = await SignUp(values);
-      console.log("Server message", result.message)
-      setServerMessage(result.message);
-      setSubmitting(false);
+      const result = await SignUpServerAction(values);
+
+      console.log("Server message", result.message);
+      if (result.error) {
+        setNotification({
+          message: result.message,
+          messageType: "error",
+        });
+        return;
+      }
+
+      setNotification({
+        message: result.message,
+        messageType: "success",
+      });
       resetForm();
     } catch (error: unknown) {
       console.error("Server error", error);
-      setErrorMessage(error);
+      setNotification({
+        message: String(error),
+        messageType: "error",
+      });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -80,12 +103,12 @@ const RegisterTabPanel = () => {
         py: 2,
       }}
     >
-      {serverMessage && (
-        <Typography variant="body1" color="primary.success">
-          {serverMessage}
-        </Typography>
+      {notification && (
+        <NotificationBar
+          message={notification.message}
+          messageType={notification.messageType}
+        />
       )}
-
       <form onSubmit={formik.handleSubmit}>
         <Stack direction="column">
           <Stack direction={{ sm: "column", md: "row" }} spacing={2}>

@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import { CreateBoardUIType, CreateBoardUISchema } from "@/lib/types";
+import { useUserContext } from "@/lib/user.context";
 import { Add } from "@mui/icons-material";
 import {
   Box,
@@ -15,12 +16,24 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+//import { io } from "socket.io-client";
 import { FormikHelpers, useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { useRouter } from "next/navigation";
 
 const CreateBoardButton = () => {
   // Initialize the variables and constants
+  //const socket = io();
+  const { user } = useUserContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user.email) {
+      router.push("/welcome");
+    }
+  }, [user, router]);
+
   const [open, setOpen] = useState(false);
 
   const handleDialogClose = () => {
@@ -69,11 +82,15 @@ const CreateBoardButton = () => {
           py: 2,
         }}
       >
-        <DialogContent sx={{ 
-          width: {
-            xs: "100%", sm: "400px", md: "500px"
-          }
-        }}>
+        <DialogContent
+          sx={{
+            width: {
+              xs: "100%",
+              sm: "400px",
+              md: "500px",
+            },
+          }}
+        >
           <DialogContentText>Enter board details</DialogContentText>
           <form onSubmit={formik.handleSubmit}>
             <Stack direction="column" spacing={2}>

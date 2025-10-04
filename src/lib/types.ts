@@ -7,7 +7,19 @@ export const FormValuesSchema = z
     password: z
       .string("Enter your password")
       .min(8, "Password must be minimum 8 characters")
-      .nonempty("Password is required"),
+      .nonempty("Password is required")
+      .refine((password) => /[A-Z]/.test(password), {
+        message: "Must contain at least one uppercase letter (A-Z)",
+      })
+      .refine((password) => /[a-z]/.test(password), {
+        message: "Must contain at least one lowercase letter (a-z)",
+      })
+      .refine((password) => /\d/.test(password), {
+        message: "Must contain at least one number (0-9)",
+      })
+      .refine((password) => /[^A-Za-z0-9]/.test(password), {
+        message: "Must contain at least one special character (!@#$%^&*, etc.)",
+      }),
   })
   .strict();
 
@@ -33,7 +45,7 @@ export const RegisterFormValuesSchema = z.object({
     .refine((password) => /[a-z]/.test(password), {
       message: "Must contain at least one lowercase letter (a-z)",
     })
-    .refine((password) => /[0-9]/.test(password), {
+    .refine((password) => /\d/.test(password), {
       message: "Must contain at least one number (0-9)",
     })
     .refine((password) => /[^A-Za-z0-9]/.test(password), {
@@ -42,14 +54,6 @@ export const RegisterFormValuesSchema = z.object({
 });
 
 export type RegisterFormValuesType = z.infer<typeof RegisterFormValuesSchema>;
-
-export const LinkTabProps = z.object({
-  label: z.string().optional(),
-  href: z.string().optional(),
-  selected: z.string().optional(),
-});
-
-export type LinkTabPropsType = z.infer<typeof LinkTabProps>;
 
 const TabsContentsSchema = z.object({
   login: React.Component,
@@ -118,7 +122,7 @@ const LoginServerResponseSchema = SignUpAuthServerResponseSchema.extend({
   token: z.string().optional(),
   user: z
     .object({
-      email: z.email(),
+      email: z.string(),
       firstname: z.string(),
     })
     .optional(),
@@ -131,7 +135,7 @@ const LoginAuthOutputSchema = SignUpAuthOutputSchema.extend({
     .object({
       token: z.string(),
       user: z.object({
-        email: z.email(),
+        email: z.string(),
         firstname: z.string(),
       }),
     })
@@ -139,3 +143,50 @@ const LoginAuthOutputSchema = SignUpAuthOutputSchema.extend({
 });
 
 export type LoginAuthOutputType = z.infer<typeof LoginAuthOutputSchema>;
+
+const NotificationBarSchema = z.object({
+  message: z.string(),
+  messageType: z.string(),
+});
+
+export type NotificationBarType = z.infer<typeof NotificationBarSchema>;
+
+const UserDataSchema = z.object({
+  email: z.string(),
+  firstname: z.string(),
+  token: z.string(),
+});
+
+export type UserDataType = z.infer<typeof UserDataSchema>;
+
+export const UserContextSchema = z.object({
+  user: z.object({
+    email: z.string(),
+    firstname: z.string(),
+  }),
+  token: z.string(),
+  LogIn: z.function({
+    input: [z.string(), z.string(), z.string()],
+    output: z.void(),
+  }),
+  LogOut: z.function({
+    input: [],
+    output: z.void(),
+  }),
+  isLoading: z.boolean(),
+});
+
+export type UserContextType = z.infer<typeof UserContextSchema>;
+export type LogInType = z.infer<typeof UserContextSchema>["LogIn"];
+
+const OnlyUserDataSchema = UserDataSchema.omit({
+  token: true,
+});
+
+const OnlyUserTokenSchema = UserDataSchema.pick({
+  token: true,
+});
+
+export type OnlyUserDataType = z.infer<typeof OnlyUserDataSchema>;
+
+export type OnlyUserTokenType = z.infer<typeof OnlyUserTokenSchema>;

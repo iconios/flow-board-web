@@ -1,4 +1,5 @@
 import NavBar from "@/components/NavBar";
+import { SocketProvider } from "@/lib/socketProvider";
 import { Box, Paper, Typography } from "@mui/material";
 
 const BoardsLayout = ({ children }: { children: React.ReactNode }) => {
@@ -41,7 +42,7 @@ const BoardsLayout = ({ children }: { children: React.ReactNode }) => {
           >
             My Boards
           </Typography>
-          {children}
+          <SocketProvider>{children}</SocketProvider>
         </Box>
       </Paper>
     </Box>

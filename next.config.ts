@@ -1,6 +1,4 @@
 import type { NextConfig } from "next";
-import * as dotenv from "dotenv";
-dotenv.config();
 
 const isProduction = process.env.NODE_ENV === "production";
 const API_URL = isProduction

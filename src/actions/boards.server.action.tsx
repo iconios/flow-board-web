@@ -1,3 +1,5 @@
+"use server";
+
 export const getBoards = async (token: string) => {
   const SERVER_BASE_URL = process.env.SERVER_BASE_URL;
   try {

@@ -1,11 +1,5 @@
 /*
 #Plan:
-1. Initialize all variables or constants
-2. Create the password input field
-3. Create the typography with link for the Forgot Password
-4. Create the login button with its onClick prop targeting the loginButtonHandler
-5. Create the loginButtonHandler function
-6. Create an empty typography to show the server messages
 */
 "use client";
 
@@ -19,26 +13,82 @@ import {
   Typography,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
-import { FormValuesSchema, FormValuesType } from "@/lib/types";
+import {
+  FormValuesSchema,
+  FormValuesType,
+  NotificationBarType,
+} from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import Link from "next/link";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import { useState } from "react";
+import { LoginServerAction } from "@/actions/auth.server.action";
+import NotificationBar from "@/lib/notificationBar";
+import { useRouter } from "next/navigation";
+import { useUserContext } from "@/lib/user.context";
 
 const LoginTabPanel = () => {
   // 1. Initialize all variables or constants
   const [showPassword, setShowPassword] = useState(false);
+  const [notification, setNotification] = useState<NotificationBarType | null>(
+    null,
+  );
+  const { LogIn, isLoading } = useUserContext();
   const initialValues: FormValuesType = {
     email: "",
     password: "",
   };
-  const handleFormSubmit = (
+
+  const router = useRouter();
+
+  const handleFormSubmit = async (
     values: FormValuesType,
     { setSubmitting, resetForm }: FormikHelpers<FormValuesType>,
   ) => {
     console.log(values);
-    setSubmitting(false);
-    resetForm();
+    try {
+      // Call the Login server action, validate the result and notify user
+      const result = await LoginServerAction(values);
+
+      console.log("Server message", result);
+      if (result.error) {
+        setNotification({
+          message: result.message,
+          messageType: "error",
+        });
+        return;
+      }
+
+      // Update the state variable with the result
+      if (result.data) {
+        LogIn(
+          result.data.user.email,
+          result.data.user.firstname,
+          result.data.token,
+        );
+
+        console.log("User details", result.data.user);
+        console.log("User token", result.data.token);
+
+        setNotification({
+          message: result.message,
+          messageType: "success",
+        });
+
+        resetForm();
+        setTimeout(() => {
+          router.push("/my-boards");
+        }, 1500);
+      }
+    } catch (error) {
+      console.error("Server error message", error);
+      setNotification({
+        message: String(error),
+        messageType: "error",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleShowPasswordClick = () => {
@@ -57,6 +107,10 @@ const LoginTabPanel = () => {
     onSubmit: handleFormSubmit,
   });
 
+  if (isLoading) {
+    return <p>Please wait...</p>;
+  }
+
   return (
     <Box
       sx={{
@@ -65,6 +119,12 @@ const LoginTabPanel = () => {
         py: 2,
       }}
     >
+      {notification && (
+        <NotificationBar
+          message={notification.message}
+          messageType={notification.messageType}
+        />
+      )}
       <form onSubmit={formik.handleSubmit}>
         <Stack direction="column" spacing={2}>
           <TextField
