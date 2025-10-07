@@ -31,6 +31,7 @@ import React, { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { SignUpServerAction } from "@/actions/auth.server.action";
 import NotificationBar from "@/lib/notificationBar";
+import { useMutation } from "@tanstack/react-query";
 
 const RegisterTabPanel = () => {
   // 1. Initialize all variables or constants
@@ -45,6 +46,12 @@ const RegisterTabPanel = () => {
     email: "",
     password: "",
   };
+
+  const mutation = useMutation({
+    mutationKey: ["register"],
+    mutationFn: (values: RegisterFormValuesType) => SignUpServerAction(values),
+  });
+
   const handleFormSubmit = async (
     values: RegisterFormValuesType,
     { setSubmitting, resetForm }: FormikHelpers<RegisterFormValuesType>,
@@ -52,19 +59,17 @@ const RegisterTabPanel = () => {
     console.log(values);
 
     try {
-      const result = await SignUpServerAction(values);
-
-      console.log("Server message", result.message);
-      if (result.error) {
+      mutation.mutateAsync(values);
+      if (mutation.isError) {
         setNotification({
-          message: result.message,
+          message: `${mutation.error.message}`,
           messageType: "error",
         });
         return;
       }
 
       setNotification({
-        message: result.message,
+        message: "A verification email has been sent to your e-mailbox",
         messageType: "success",
       });
       resetForm();

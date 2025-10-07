@@ -20,7 +20,7 @@ const CreateBoardUI = () => {
     setOpen(false);
   };
   const initialValues = {
-    backgroundColor: "",
+    bg_color: "#000000",
     title: "",
   };
 
@@ -71,19 +71,14 @@ const CreateBoardUI = () => {
             <TextField
               type="color"
               label="Background Color"
-              id="backgroundColor"
-              name="backgroundColor"
+              id="bg_color"
+              name="bg_color"
               variant="outlined"
-              value={formik.values.backgroundColor}
+              value={formik.values.bg_color}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={
-                formik.touched.backgroundColor &&
-                Boolean(formik.errors.backgroundColor)
-              }
-              helperText={
-                formik.touched.backgroundColor && formik.errors.backgroundColor
-              }
+              error={formik.touched.bg_color && Boolean(formik.errors.bg_color)}
+              helperText={formik.touched.bg_color && formik.errors.bg_color}
             />
           </Stack>
 

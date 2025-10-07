@@ -68,23 +68,21 @@ export const ForgotPasswordSchema = FormValuesSchema.pick({
 
 export type ForgotPasswordType = z.infer<typeof ForgotPasswordSchema>;
 
-export const BoardCardSchema = z
-  .object({
-    backgroundColor: z
-      .string()
-      .regex(/^#?([0-9a-fA-F]{6})$/, "Invalid 6-digit hex color code"),
-    userName: z.string(),
-    title: z
-      .string("Title must be alphanumeric")
-      .min(2, "Minimum two characters required")
-      .nonempty("Title cannot be empty"),
-  })
-  .strict();
+export const BoardCardSchema = z.object({
+  bg_color: z.string(),
+  userName: z.string(),
+  title: z
+    .string("Title must be alphanumeric")
+    .min(2, "Minimum two characters required")
+    .nonempty("Title cannot be empty"),
+  boardId: z.string(),
+});
 
 export type BoardCardType = z.infer<typeof BoardCardSchema>;
 
 export const CreateBoardUISchema = BoardCardSchema.omit({
   userName: true,
+  boardId: true,
 });
 
 export type CreateBoardUIType = z.infer<typeof CreateBoardUISchema>;
@@ -102,7 +100,6 @@ const BoardsReadSchema = z.object({
 export type BoardsReadType = z.infer<typeof BoardsReadSchema>;
 
 const SignUpAuthOutputSchema = z.object({
-  error: z.boolean(),
   message: z.string(),
 });
 
@@ -131,16 +128,11 @@ const LoginServerResponseSchema = SignUpAuthServerResponseSchema.extend({
 
 export type LoginServerResponseType = z.infer<typeof LoginServerResponseSchema>;
 
-const LoginAuthOutputSchema = SignUpAuthOutputSchema.extend({
-  data: z
-    .object({
-      token: z.string(),
-      user: z.object({
-        email: z.string(),
-        firstname: z.string(),
-      }),
-    })
-    .optional(),
+const LoginAuthOutputSchema = z.object({
+  user: z.object({
+    email: z.string(),
+    firstname: z.string(),
+  }),
 });
 
 export type LoginAuthOutputType = z.infer<typeof LoginAuthOutputSchema>;
@@ -160,14 +152,27 @@ const UserDataSchema = z.object({
 
 export type UserDataType = z.infer<typeof UserDataSchema>;
 
+const BoardsSchema = z.object({
+  boardId: z.string().optional(),
+  bgColor: z.string(),
+  user: z.object({
+    firstname: z.string(),
+    email: z.string(),
+  }),
+  title: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export type BoardsType = z.infer<typeof BoardsSchema>;
+
 export const UserContextSchema = z.object({
   user: z.object({
     email: z.string(),
     firstname: z.string(),
   }),
-  token: z.string(),
   LogIn: z.function({
-    input: [z.string(), z.string(), z.string()],
+    input: [z.string(), z.string()],
     output: z.void(),
   }),
   LogOut: z.function({
@@ -217,24 +222,8 @@ export type GetBoardsServerResponseType = z.infer<
   typeof GetBoardsServerResponseSchema
 >;
 
-const BoardsSchema = z.object({
-  boardId: z.string().optional(),
-  bgColor: z.string(),
-  user: z.object({
-    firstname: z.string(),
-    email: z.string(),
-  }),
-  title: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-});
-
-export type BoardsType = z.infer<typeof BoardsSchema>;
-
 const GetBoardsOutputSchema = z.object({
-  error: z.boolean(),
-  message: z.string(),
-  data: z.array(BoardsSchema).optional(),
+  data: z.array(BoardsSchema),
 });
 
 export type GetBoardsOutputType = z.infer<typeof GetBoardsOutputSchema>;
@@ -278,14 +267,25 @@ export type DeleteBoardServerResponseType = z.infer<
   typeof DeleteBoardServerResponseSchema
 >;
 
-const UpdateBoardOutputSchema = SignUpAuthOutputSchema.extend({
-  data: z
-    .object({
-      boardId: z.string(),
-      title: z.string(),
-      bgColor: z.string(),
-    })
-    .optional(),
+const CreateBoardServerResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  board: z.object({
+    id: z.string(),
+    title: z.string(),
+    bg_color: z.string(),
+    lists: z.array(z.string()),
+  }),
+});
+
+export type CreateBoardServerResponseType = z.infer<
+  typeof CreateBoardServerResponseSchema
+>;
+
+const UpdateBoardOutputSchema = z.object({
+  boardId: z.string(),
+  title: z.string(),
+  bgColor: z.string(),
 });
 
 export type UpdateBoardOutputType = z.infer<typeof UpdateBoardOutputSchema>;
@@ -296,3 +296,29 @@ const UpdateObjectSchema = z.object({
 });
 
 export type UpdateObjectType = z.infer<typeof UpdateObjectSchema>;
+
+const EditBoardInputSchema = z.object({
+  dialogOpen: z.boolean(),
+  title: z.string(),
+  bg_color: z.string(),
+  boardId: z.string(),
+  onClose: z.function(),
+});
+
+export type EditBoardInputType = z.infer<typeof EditBoardInputSchema>;
+
+export const EditBoardInitialValuesSchema = z.object({
+  bg_color: z.string(),
+  title: z.string(),
+});
+
+export type EditBoardInitialValuesType = z.infer<
+  typeof EditBoardInitialValuesSchema
+>;
+
+const DeleteBoardInputSchema = EditBoardInputSchema.omit({
+  title: true,
+  bg_color: true,
+});
+
+export type DeleteBoardInputType = z.infer<typeof DeleteBoardInputSchema>;

@@ -26,6 +26,7 @@ import { LoginServerAction } from "@/actions/auth.server.action";
 import NotificationBar from "@/lib/notificationBar";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/lib/user.context";
+import { useMutation } from "@tanstack/react-query";
 
 const LoginTabPanel = () => {
   // 1. Initialize all variables or constants
@@ -38,52 +39,43 @@ const LoginTabPanel = () => {
     email: "",
     password: "",
   };
-
   const router = useRouter();
+
+  const mutation = useMutation({
+    mutationKey: ["user"],
+    mutationFn: (values: { email: string; password: string }) =>
+      LoginServerAction(values),
+    retry: 0,
+  });
 
   const handleFormSubmit = async (
     values: FormValuesType,
     { setSubmitting, resetForm }: FormikHelpers<FormValuesType>,
   ) => {
     console.log(values);
+    setNotification(null);
     try {
       // Call the Login server action, validate the result and notify user
-      const result = await LoginServerAction(values);
-
-      console.log("Server message", result);
-      if (result.error) {
-        setNotification({
-          message: result.message,
-          messageType: "error",
-        });
-        return;
-      }
+      const data = await mutation.mutateAsync(values);
 
       // Update the state variable with the result
-      if (result.data) {
-        LogIn(
-          result.data.user.email,
-          result.data.user.firstname,
-          result.data.token,
-        );
+      LogIn(data.user.email, data.user.firstname);
 
-        console.log("User details", result.data.user);
-        console.log("User token", result.data.token);
+      setNotification({
+        message: "Login successful",
+        messageType: "success",
+      });
 
-        setNotification({
-          message: result.message,
-          messageType: "success",
-        });
+      console.log("User details", data.user);
 
-        resetForm();
-        setTimeout(() => {
-          router.push("/my-boards");
-        }, 1500);
-      }
-    } catch (error) {
+      resetForm();
+      setTimeout(() => {
+        router.push("/my-boards");
+      }, 800);
+    } catch (error: any) {
       console.error("Server error message", error);
       setNotification({
-        message: String(error),
+        message: `${error.message}`,
         messageType: "error",
       });
     } finally {

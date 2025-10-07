@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  CreateBoardServerResponseType,
   DeleteBoardOutputType,
   DeleteBoardServerResponseType,
   GetBoardsOutputType,
@@ -9,27 +10,23 @@ import {
   UpdateBoardServerResponseType,
   UpdateObjectType,
 } from "@/lib/types";
+import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
 
 const SERVER_BASE_URL = process.env.SERVER_BASE_URL;
 
 const validateServerUrlAndToken = (token: string) => {
   if (!SERVER_BASE_URL) {
-    return {
-      error: true,
-      message: "Server Url is required",
-    };
+    throw new Error("Server Url is required");
   }
+
   if (!token) {
-    return {
-      error: true,
-      message: "Token is required",
-    };
+    throw new Error("Not authenticated");
   }
 };
 
-const GetBoardsServerAction = async (
-  token: string,
-): Promise<GetBoardsOutputType> => {
+const GetBoardsServerAction = async (): Promise<GetBoardsOutputType> => {
+  const token = (await cookies()).get("token")?.value ?? "";
   validateServerUrlAndToken(token);
 
   try {
@@ -39,6 +36,9 @@ const GetBoardsServerAction = async (
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      next: {
+        tags: ["board"],
+      },
     });
 
     const result: GetBoardsServerResponseType = await response.json();
@@ -46,17 +46,11 @@ const GetBoardsServerAction = async (
 
     // 2. Return the result to the user
     if (!result.success) {
-      return {
-        error: true,
-        message: result.message,
-      };
+      throw new Error(`${result.message}`);
     }
 
     if (!result.boards) {
-      return {
-        error: false,
-        message: "No boards found",
-      };
+      throw new Error("No boards found");
     }
 
     const boardsArrayToReturn = result.boards.map((board) => ({
@@ -73,33 +67,25 @@ const GetBoardsServerAction = async (
 
     console.log("Boards details for client", boardsArrayToReturn);
     return {
-      error: false,
-      message: result.message,
       data: boardsArrayToReturn,
     };
   } catch (error) {
     console.error("Error fetching board data", error);
 
-    return {
-      error: true,
-      message: "Network error. Please try again",
-    };
+    throw new Error("Network error. Please try again");
   }
 };
 
 const UpdateBoardServerAction = async (
-  token: string,
   boardId: string,
   updateObject: UpdateObjectType,
 ): Promise<UpdateBoardOutputType> => {
+  const token = (await cookies()).get("token")?.value ?? "";
   validateServerUrlAndToken(token);
 
   if (!boardId) {
     console.error("Board ID is required");
-    return {
-      error: true,
-      message: "Board ID is required",
-    };
+    throw new Error("Board ID is required");
   }
 
   try {
@@ -119,50 +105,36 @@ const UpdateBoardServerAction = async (
 
     // 2. Send the result to the user
     if (!result.success) {
-      return {
-        error: true,
-        message: result.message,
-      };
+      throw new Error(`${result.message}`);
     }
 
     if (!result.board) {
-      return {
-        error: false,
-        message: "No board found",
-      };
+      throw new Error("No board found");
     }
 
+    revalidateTag("board");
+
     return {
-      error: false,
-      message: result.message,
-      data: {
-        boardId: result.board.id,
-        title: result.board.title,
-        bgColor: result.board.bg_color,
-      },
+      boardId: result.board.id,
+      title: result.board.title,
+      bgColor: result.board.bg_color,
     };
   } catch (error) {
     console.error("Error editing board", error);
 
-    return {
-      error: true,
-      message: "Error editing board",
-    };
+    throw new Error("Error editing board");
   }
 };
 
 const DeleteBoardServerAction = async (
-  token: string,
   boardId: string,
 ): Promise<DeleteBoardOutputType> => {
+  const token = (await cookies()).get("token")?.value ?? "";
   validateServerUrlAndToken(token);
 
   if (!boardId) {
     console.error("Board ID is required");
-    return {
-      error: true,
-      message: "Board ID is required",
-    };
+    throw new Error("Board ID is required");
   }
 
   try {
@@ -179,23 +151,52 @@ const DeleteBoardServerAction = async (
 
     // 2. Send the result to the user
     if (!result.success) {
-      return {
-        error: true,
-        message: result.message,
-      };
+      throw new Error(`${result.message}`);
     }
 
     return {
-      error: false,
       message: result.message,
     };
   } catch (error) {
     console.error("Error deleting board", error);
 
+    throw new Error("Error deleting board");
+  }
+};
+
+// Create a board
+const CreateBoardServerAction = async (values: {
+  title: string;
+  bg_color: string;
+}) => {
+  const token = (await cookies()).get("token")?.value ?? "";
+  validateServerUrlAndToken(token);
+
+  try {
+    // 1. Call the create board API endpoint
+    const response = await fetch(`${SERVER_BASE_URL}/board/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values),
+    });
+
+    console.log("Create board response", response);
+    const result: CreateBoardServerResponseType = await response.json();
+
+    // 2. Send the result to the user
+    if (!result.success) {
+      throw new Error(`${result.message}`);
+    }
+
     return {
-      error: true,
-      message: "Error deleting board",
+      board: result.board,
     };
+  } catch (error) {
+    console.error("Error creating board", error);
+
+    throw new Error("Error creating board");
   }
 };
 
@@ -203,4 +204,5 @@ export {
   GetBoardsServerAction,
   UpdateBoardServerAction,
   DeleteBoardServerAction,
+  CreateBoardServerAction,
 };

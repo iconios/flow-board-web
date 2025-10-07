@@ -11,66 +11,44 @@
 import { GetBoardsServerAction } from "@/actions/boards.server.action";
 import CreateBoardButton from "@/components/board/createBoardButton";
 import BoardCard from "@/components/board/showBoardCard";
-import { BoardsType } from "@/lib/types";
 import { useUserContext } from "@/lib/user.context";
 import { Box, Container, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NotificationBar from "@/lib/notificationBar";
+import { useQuery } from "@tanstack/react-query";
 
 const BoardsPage = () => {
   // 1. Initialize the needed variables and constants
   const router = useRouter();
-  const { token, isLoading, user } = useUserContext();
-  const [notification, setNotification] = useState({
-    message: "",
-    messageType: "",
-  });
-  const [boards, setBoards] = useState<BoardsType[] | null>(null);
+  const { isLoading, user } = useUserContext();
 
-  // 2. Fetch the user's boards
   useEffect(() => {
-    // Check if user is authenticated
+    if (isLoading) return;
+
     if (!user.email) {
       router.push("/welcome");
-      return;
     }
+  }, [user.email, router, isLoading]);
 
-    const fetchBoards = async () => {
-      try {
-        const result = await GetBoardsServerAction(token);
+  // Get the boards from server
+  const { isPending, isError, error, data } = useQuery({
+    queryKey: ["board", user.email],
+    queryFn: () => GetBoardsServerAction(),
+    enabled: !!user.email && !isLoading,
+    staleTime: 30_000,
+    retry: 1,
+  });
 
-        if (result.error) {
-          setNotification({
-            message: result.message,
-            messageType: "error",
-          });
-        }
+  console.log("Board details frontend", data);
 
-        if (result.data) {
-          setBoards(result.data);
-          setNotification({
-            message: result.message,
-            messageType: "success",
-          });
-        }
-      } catch (error) {
-        console.error("Error reading boards", error);
-        setNotification({
-          message: "Error reading boards",
-          messageType: "error",
-        });
-      }
-    };
-    fetchBoards();
-  }, [token, user, router]);
-
-  console.log("Board details frontend", boards);
+  if (isError)
+    return <NotificationBar message={error.message} messageType="error" />;
 
   // 3. Show the boards info
-  if (isLoading) {
-    return <div>Please wait...</div>;
-  }
+  if (isPending) return <div>Please wait...</div>;
+
+  const boards = data?.data;
 
   if (boards && boards.length === 0) {
     return (
@@ -84,12 +62,6 @@ const BoardsPage = () => {
   if (boards && boards.length > 0) {
     return (
       <Container>
-        {notification && (
-          <NotificationBar
-            message={notification.message}
-            messageType={notification.messageType}
-          />
-        )}
         <CreateBoardButton />
         <Box
           sx={{
@@ -114,10 +86,11 @@ const BoardsPage = () => {
           >
             {boards.map((board) => (
               <BoardCard
-                backgroundColor={board.bgColor}
+                bg_color={board.bgColor}
                 title={board.title}
                 userName={board.user.firstname}
                 key={board.boardId}
+                boardId={board.boardId!}
               />
             ))}
           </Box>

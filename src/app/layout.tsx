@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import ThemeRegistry from "@/lib/ThemeRegistry";
 import UserContextProvider from "@/lib/user.context";
+import QueryProvider from "@/lib/queryProvider";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="en" className={roboto.variable}>
       <body>
         <UserContextProvider>
-          <ThemeRegistry>{children}</ThemeRegistry>
+          <ThemeRegistry>
+            <QueryProvider>{children}</QueryProvider>
+          </ThemeRegistry>
         </UserContextProvider>
       </body>
     </html>

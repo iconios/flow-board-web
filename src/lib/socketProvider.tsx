@@ -2,14 +2,14 @@
 
 import { io, type Socket } from "socket.io-client";
 import { useEffect, useRef, useState, createContext, useContext } from "react";
-import { useUserContext } from "./user.context";
 
 type SocketCtxType = Socket | null;
 const SocketCtx = createContext<SocketCtxType>(null);
 export const useSocket = () => useContext(SocketCtx);
 
-export function SocketProvider({ children }: { children: React.ReactNode }) {
-  const { token } = useUserContext();
+export function SocketProvider({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const closingRef = useRef(false);
 
@@ -17,8 +17,8 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     const raw = process.env.NEXT_PUBLIC_SERVER_BASE_URL;
     console.log("[socket] NEXT_PUBLIC_SERVER_BASE_URL:", JSON.stringify(raw));
 
-    if (!token || !raw) {
-      // if token goes null, close any existing socket
+    if (!raw) {
+      // if server url goes null, close any existing socket
       if (socket) {
         closingRef.current = true;
         socket.close();
@@ -43,7 +43,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       path: "/socket.io",
       // Uncomment if polling causes issues in your environment:
       // transports: ["websocket"],
-      auth: { token: `Bearer ${token}` },
+      withCredentials: true,
     });
 
     // Wire up basic events
@@ -63,7 +63,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
         s.close();
       }
     };
-  }, [token]); // env is read at runtime; no need to add to deps
+  }, []); // env is read at runtime; no need to add to deps
 
   return <SocketCtx.Provider value={socket}>{children}</SocketCtx.Provider>;
 }

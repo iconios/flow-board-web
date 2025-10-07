@@ -9,6 +9,7 @@ import {
   SignUpAuthOutputType,
   SignUpAuthServerResponseType,
 } from "@/lib/types";
+import { cookies } from "next/headers";
 
 const SERVER_BASE_URL = process.env.SERVER_BASE_URL;
 
@@ -19,10 +20,7 @@ const SignUpServerAction = async ({
   password,
 }: RegisterFormValuesType): Promise<SignUpAuthOutputType> => {
   if (!SERVER_BASE_URL) {
-    return {
-      error: true,
-      message: "Server Url is required",
-    };
+    throw new Error("Server Url is required");
   }
 
   try {
@@ -42,40 +40,33 @@ const SignUpServerAction = async ({
     const result: SignUpAuthServerResponseType = await response.json();
 
     if (!result.success) {
-      return {
-        error: true,
-        message: result.message,
-      };
+      throw new Error(`${result.message}`);
     }
 
     return {
-      error: false,
       message: result.message,
     };
   } catch (error) {
     console.error(`Error registering ${email}`, error);
 
-    return {
-      error: true,
-      message: "Network error. Please try again",
-    };
+    throw new Error("Network error. Please try again");
   }
 };
 
+// Login server action
 const LoginServerAction = async ({
   email,
   password,
 }: FormValuesType): Promise<LoginAuthOutputType> => {
   if (!SERVER_BASE_URL) {
-    return {
-      error: true,
-      message: "Server Url is required",
-    };
+    throw new Error("Server Url is required");
   }
+
   console.log("Login server action called", {
     email,
     password,
   });
+
   try {
     const response = await fetch(`${SERVER_BASE_URL}/auth/login`, {
       method: "POST",
@@ -91,41 +82,38 @@ const LoginServerAction = async ({
     const result: LoginServerResponseType = await response.json();
 
     if (!result.success) {
-      return {
-        error: true,
-        message: result.message,
-      };
+      throw new Error(`${result.message}`);
     }
 
+    const token = result.token;
+    if (!token) throw new Error("Missing token");
+    (await cookies()).set("token", token, {
+      httpOnly: true, // protects against XSS
+      secure: true, // only over HTTPS (true in prod)
+      sameSite: "lax", // good default for app flows
+      path: "/",
+      maxAge: 60 * 60 * 24 * 1,
+    });
+
     return {
-      error: false,
-      message: result.message,
-      data: {
-        token: result.token!,
-        user: {
-          email: result.user!.email,
-          firstname: result.user!.firstname,
-        },
+      user: {
+        email: result.user!.email,
+        firstname: result.user!.firstname,
       },
     };
   } catch (error) {
     console.error(`Error logging in ${email}`, error);
 
-    return {
-      error: true,
-      message: "Network error. Please try again",
-    };
+    throw new Error("Network error. Please try again");
   }
 };
 
+// Forgot Password Server Action
 const ForgotPasswordServerAction = async ({
   email,
 }: ForgotPasswordType): Promise<SignUpAuthOutputType> => {
   if (!SERVER_BASE_URL) {
-    return {
-      error: true,
-      message: "Server Url is required",
-    };
+    throw new Error("Server Url is required");
   }
 
   try {
@@ -142,24 +130,26 @@ const ForgotPasswordServerAction = async ({
     const result: SignUpAuthServerResponseType = await response.json();
 
     if (!result.success) {
-      return {
-        error: true,
-        message: result.message,
-      };
+      throw new Error(`${result.message}`);
     }
 
     return {
-      error: false,
       message: result.message,
     };
   } catch (error) {
     console.error(`Error in forgot password for ${email}`, error);
 
-    return {
-      error: true,
-      message: "Network error. Please try again",
-    };
+    throw new Error("Network error. Please try again");
   }
 };
 
-export { LoginServerAction, SignUpServerAction, ForgotPasswordServerAction };
+const LogoutServerAction = async () => {
+  (await cookies()).delete("token");
+};
+
+export {
+  LoginServerAction,
+  SignUpServerAction,
+  ForgotPasswordServerAction,
+  LogoutServerAction,
+};

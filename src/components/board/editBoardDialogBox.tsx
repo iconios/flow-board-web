@@ -1,80 +1,92 @@
-"use client";
-
-import { CreateBoardServerAction } from "@/actions/boards.server.action";
+import { UpdateBoardServerAction } from "@/actions/boards.server.action";
 import NotificationBar from "@/lib/notificationBar";
 import {
-  CreateBoardUIType,
-  CreateBoardUISchema,
+  EditBoardInputType,
+  EditBoardInitialValuesType,
+  EditBoardInitialValuesSchema,
   NotificationBarType,
 } from "@/lib/types";
-import { Add } from "@mui/icons-material";
+import { useUserContext } from "@/lib/user.context";
 import {
-  Box,
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
-  IconButton,
-  Paper,
   Stack,
   TextField,
-  Typography,
+  DialogActions,
+  Button,
+  DialogTitle,
 } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormikHelpers, useFormik } from "formik";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const CreateBoardButton = () => {
+const EditBoardDialogBox = ({
+  dialogOpen,
+  title,
+  bg_color,
+  boardId,
+  onClose,
+}: EditBoardInputType) => {
   // Initialize the variables and constants
-  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { user } = useUserContext();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
 
   const handleDialogClose = () => {
-    setOpen(false);
+    onClose();
+    setNotification(null);
   };
 
-  const handleDialogOpen = () => {
-    setOpen(true);
-  };
+  const initialValues = useMemo(() => {
+    return {
+      bg_color: bg_color,
+      title: title,
+    };
+  }, [bg_color, title]);
 
-  const initialValues = {
-    bg_color: "#000000",
-    title: "",
-  };
-
-  const mutation = useMutation({
-    mutationKey: ["board"],
-    mutationFn: (values: { title: string; bg_color: string }) =>
-      CreateBoardServerAction(values),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["board"] }),
+  const {
+    mutateAsync,
+    isPending,
+    isError,
+    error: serverError,
+  } = useMutation({
+    mutationFn: (payload: {
+      boardId: string;
+      values: { title?: string; bg_color?: string };
+    }) => UpdateBoardServerAction(payload.boardId, payload.values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["board", user.email],
+      });
+    },
   });
 
-  const handleCreateBoardSubmit = async (
-    values: CreateBoardUIType,
-    { setSubmitting, resetForm }: FormikHelpers<CreateBoardUIType>,
+  const handleEditBoardSubmit = async (
+    values: EditBoardInitialValuesType,
+    { setSubmitting, resetForm }: FormikHelpers<EditBoardInitialValuesType>,
   ) => {
     console.log(values);
     setNotification(null);
     try {
-      await mutation.mutateAsync(values);
+      await mutateAsync({ boardId, values });
       setNotification({
-        message: "Board created successfully",
+        message: "Board updated",
         messageType: "success",
       });
 
+      // Don't close immediately - let user see success message
       setTimeout(() => {
-        resetForm();
         handleDialogClose();
+        resetForm({ values });
       }, 800);
-    } catch (error) {
-      console.error("Error creating board", error);
+    } catch (error: any) {
+      console.error("Error editing board", error);
       setNotification({
-        message: "Error creating board",
+        message: `${error.message}`,
         messageType: "error",
       });
     } finally {
@@ -84,52 +96,46 @@ const CreateBoardButton = () => {
 
   const formik = useFormik({
     initialValues,
-    validationSchema: toFormikValidationSchema(CreateBoardUISchema),
-    onSubmit: handleCreateBoardSubmit,
+    enableReinitialize: true,
+    validationSchema: toFormikValidationSchema(EditBoardInitialValuesSchema),
+    onSubmit: handleEditBoardSubmit,
   });
 
+  if (isError)
+    return (
+      <NotificationBar message={serverError.message} messageType="error" />
+    );
+
   return (
-    <Paper
-      sx={{
-        width: { xs: "100%", sm: "33.33%", md: "25%" },
-        mb: 2,
-        mt: 2,
-      }}
-    >
-      {mutation.isError && (
-        <NotificationBar message={mutation.error.message} messageType="error" />
-      )}
+    <>
       {notification && (
         <NotificationBar
           message={notification.message}
           messageType={notification.messageType}
         />
       )}
-      <Box>
-        <IconButton onClick={handleDialogOpen}>
-          <Add />
-          <Typography>Create a Board</Typography>
-        </IconButton>
-      </Box>
       <Dialog
-        open={open}
-        onClose={handleDialogClose}
+        open={dialogOpen}
+        onClose={onClose}
+        fullWidth
+        maxWidth="sm"
         sx={{
           borderRadius: 5,
           px: 1,
-          py: 2,
+          py: 1,
         }}
       >
+        <DialogTitle>Edit Board</DialogTitle>
         <DialogContent
-          sx={{
-            width: {
-              xs: "100%",
-              sm: "400px",
-              md: "500px",
-            },
-          }}
+        // sx={{
+        //   width: {
+        //     xs: "100%",
+        //     sm: "400px",
+        //     md: "500px",
+        //   },
+        // }}
         >
-          <DialogContentText>Enter board details</DialogContentText>
+          <DialogContentText>Enter the board fields values</DialogContentText>
           <form onSubmit={formik.handleSubmit}>
             <Stack direction="column" spacing={2}>
               <TextField
@@ -159,6 +165,7 @@ const CreateBoardButton = () => {
                   formik.touched.bg_color && Boolean(formik.errors.bg_color)
                 }
                 helperText={formik.touched.bg_color && formik.errors.bg_color}
+                slotProps={{ inputLabel: { shrink: true } }}
               />
             </Stack>
 
@@ -169,9 +176,9 @@ const CreateBoardButton = () => {
                   color="primary"
                   variant="contained"
                   sx={{ mt: 2 }}
-                  disabled={mutation.isPending}
+                  disabled={formik.isSubmitting || isPending || !formik.dirty}
                 >
-                  Create
+                  {formik.isSubmitting ? "Updating..." : "Edit"}
                 </Button>
                 <Button
                   color="secondary"
@@ -186,8 +193,8 @@ const CreateBoardButton = () => {
           </form>
         </DialogContent>
       </Dialog>
-    </Paper>
+    </>
   );
 };
 
-export default CreateBoardButton;
+export default EditBoardDialogBox;
