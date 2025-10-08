@@ -171,7 +171,7 @@ const CreateBoardButton = () => {
                   sx={{ mt: 2 }}
                   disabled={mutation.isPending}
                 >
-                  Create
+                  {mutation.isPending ? "Creating..." : "Create"}
                 </Button>
                 <Button
                   color="secondary"

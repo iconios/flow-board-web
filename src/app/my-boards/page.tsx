@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NotificationBar from "@/lib/notificationBar";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 const BoardsPage = () => {
   // 1. Initialize the needed variables and constants
@@ -85,13 +86,15 @@ const BoardsPage = () => {
             }}
           >
             {boards.map((board) => (
-              <BoardCard
-                bg_color={board.bgColor}
-                title={board.title}
-                userName={board.user.firstname}
-                key={board.boardId}
-                boardId={board.boardId!}
-              />
+              <Link href={`/my-lists/${board.boardId}`} key={board.boardId} style={{ textDecoration: "none" }}>
+                <BoardCard
+                  bg_color={board.bgColor}
+                  title={board.title}
+                  userName={board.user.firstname}
+                  key={board.boardId}
+                  boardId={board.boardId!}
+                />
+              </Link>
             ))}
           </Box>
         </Box>

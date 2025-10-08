@@ -178,11 +178,12 @@ const CreateBoardServerAction = async (values: {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(values),
     });
 
-    console.log("Create board response", response);
+    console.log("Create board server response", response);
     const result: CreateBoardServerResponseType = await response.json();
 
     // 2. Send the result to the user

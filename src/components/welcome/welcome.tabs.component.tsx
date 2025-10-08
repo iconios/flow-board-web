@@ -49,6 +49,8 @@ const LoginRegisterTabs = () => {
         width: { xs: "100%", sm: "70%" },
         mx: { xs: 0, sm: "auto" },
         mb: 2,
+        px: { xs: 2, sm: "auto" },
+        pb: { xs: 2, sm: "auto" },
         borderRadius: 2,
       }}
     >
