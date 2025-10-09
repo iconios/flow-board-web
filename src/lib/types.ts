@@ -375,3 +375,25 @@ export type GetListServerResponseType = z.infer<
   typeof GetListServerResponseSchema
 >;
 export type ListType = z.infer<typeof ListSchema>;
+
+export type ListPageSearchParamsType = {
+  t: string;
+  bg: string;
+  uf: string;
+  ue: string;
+};
+
+export const CreateTaskFormSchema = z.object({
+  title: z
+    .string("String of characters required")
+    .min(2, "Minimum two characters required")
+    .max(100, "Maximum of 100 characters allowed"),
+  description: z
+    .string("String of characters required")
+    .max(255, "Maximum of 100 characters allowed"),
+  dueDate: z.string(),
+  priority: z.enum(["low", "medium", "high", "critical"]),
+  position: z.number("Only numeric character allowed"),
+});
+
+export type CreateTaskFormType = z.infer<typeof CreateTaskFormSchema>;

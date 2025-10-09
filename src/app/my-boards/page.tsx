@@ -86,7 +86,11 @@ const BoardsPage = () => {
             }}
           >
             {boards.map((board) => (
-              <Link href={`/my-lists/${board.boardId}`} key={board.boardId} style={{ textDecoration: "none" }}>
+              <Link
+                href={`/my-lists/${board.boardId}?t=${board.title}&bg=${board.bgColor}&uf=${board.user.firstname}&um=${board.user.email}`}
+                key={board.boardId}
+                style={{ textDecoration: "none" }}
+              >
                 <BoardCard
                   bg_color={board.bgColor}
                   title={board.title}

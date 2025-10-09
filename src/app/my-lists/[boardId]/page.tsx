@@ -1,16 +1,26 @@
 /*
 #Plan:
+0. Declare the variables and constants
 1. Get the board ID and Fetch the board's lists
 2. Display the list
 3. Each list should fetch its tasks
 */
-"use server"
+"use server";
 import ListsForBoard from "@/components/list/listsForBoard";
+import { ListPageSearchParamsType } from "@/lib/types";
 
-const Page = async ({ params }: { params: Promise<{ boardId: string }> }) => {
-  // 0. Declare the variables and constants
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ boardId: string }>;
+  searchParams: ListPageSearchParamsType;
+}) => {
   const { boardId } = await params;
-  return <ListsForBoard boardId={boardId} />;
+
+  const { t, bg } = await searchParams;
+
+  return <ListsForBoard boardId={boardId} title={t} bgColor={bg} />;
 };
 
 export default Page;
