@@ -1,3 +1,5 @@
+// Each board display
+
 import { BoardCardType } from "@/lib/types";
 import { Delete, Edit, MoreVert } from "@mui/icons-material";
 import {
@@ -54,6 +56,7 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
   };
 
   return (
+    // Container for each Board card
     <Container>
       <Card
         sx={{

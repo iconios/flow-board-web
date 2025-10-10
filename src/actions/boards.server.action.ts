@@ -154,6 +154,7 @@ const DeleteBoardServerAction = async (
       throw new Error(`${result.message}`);
     }
 
+    revalidateTag("board");
     return {
       message: result.message,
     };
@@ -191,6 +192,7 @@ const CreateBoardServerAction = async (values: {
       throw new Error(`${result.message}`);
     }
 
+    revalidateTag("board");
     return {
       board: result.board,
     };

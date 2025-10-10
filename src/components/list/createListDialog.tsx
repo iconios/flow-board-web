@@ -19,89 +19,74 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormikHelpers, useFormik } from "formik";
-import {
-  CreateTaskFormType,
-  CreateTaskFormSchema,
-  CreateTaskInputType,
-  NotificationBarType,
-} from "@/lib/types";
+import { NotificationBarType } from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import {
-  datetimeLocalToIso,
-  isoToDatetimeLocal,
-} from "@/lib/dateTimeConverter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreateTasksServerAction } from "@/actions/tasks.server.action";
 import NotificationBar from "@/lib/notificationBar";
+import {
+  CreateListComponentInputType,
+  CreateListFormSchema,
+  CreateListFormType,
+  CreateListInputType,
+} from "@/lib/list.types";
+import { CreateListServerAction } from "@/actions/lists.server.action";
 
-const CreateTaskDialog = ({
-  listId,
+const CreateListDialog = ({
   boardId,
-}: {
-  listId: string;
-  boardId: string;
-}) => {
+  open,
+  onClose,
+}: CreateListComponentInputType) => {
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
-  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const handleDialogOpen = () => {
-    setOpen(true);
-    setNotification(null);
-  };
-
   const handleDialogClose = () => {
-    setOpen(false);
+    onClose();
   };
 
   const initialValues = {
     title: "",
-    description: "",
-    dueDate: new Date().toISOString(),
-    priority: "low" as const,
     position: 0,
+    status: "active" as const,
   };
 
   //  Mutation
   const mutation = useMutation({
-    mutationKey: [`list:${boardId}`],
-    mutationFn: (newTask: CreateTaskInputType) =>
-      CreateTasksServerAction(newTask),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [`list:${boardId}`] }),
+    mutationKey: ["list"],
+    mutationFn: (newList: CreateListInputType) =>
+      CreateListServerAction(newList),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["list"] }),
   });
 
   useEffect(() => {
     if (mutation.isSuccess) {
       setNotification({
-        message: "Task created successfully",
+        message: "List created successfully",
         messageType: "success",
       });
     }
 
     if (mutation.isError) {
       setNotification({
-        message: `${mutation.error?.message}` || "Failed to create task",
+        message: `${mutation.error?.message}` || "Failed to create list",
         messageType: "error",
       });
     }
   }, [mutation.isSuccess, mutation.isError, mutation.error]);
 
   // Form submission handler
-  const handleCreateTaskSubmit = async (
-    values: CreateTaskFormType,
-    { setSubmitting, resetForm }: FormikHelpers<CreateTaskFormType>,
+  const handleCreateListSubmit = async (
+    values: CreateListFormType,
+    { setSubmitting, resetForm }: FormikHelpers<CreateListFormType>,
   ) => {
     console.log(values);
-    const newTaskInput = {
-      listId,
+    const newListInput = {
       boardId,
       ...values,
     };
     try {
-      await mutation.mutateAsync(newTaskInput);
+      await mutation.mutateAsync(newListInput);
       resetForm();
       handleDialogClose();
     } catch (error) {
@@ -111,10 +96,10 @@ const CreateTaskDialog = ({
     }
   };
 
-  const formik = useFormik<CreateTaskFormType>({
+  const formik = useFormik<CreateListFormType>({
     initialValues,
-    validationSchema: toFormikValidationSchema(CreateTaskFormSchema),
-    onSubmit: handleCreateTaskSubmit,
+    validationSchema: toFormikValidationSchema(CreateListFormSchema),
+    onSubmit: handleCreateListSubmit,
   });
 
   return (
@@ -125,41 +110,23 @@ const CreateTaskDialog = ({
           messageType={notification.messageType}
         />
       )}
-      <Box
-        bgcolor="#E5E4E2"
-        sx={{
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
-        <IconButton
-          sx={{
-            pr: { xs: 2 },
-            width: "200px",
-          }}
-          onClick={handleDialogOpen}
-        >
-          <Add />
-          Add new task
-        </IconButton>
-      </Box>
       <Dialog
         open={open}
         onClose={handleDialogClose}
-        aria-labelledby="create-task-dialog-title"
-        aria-describedby="create-task-dialog-description"
+        aria-labelledby="create-list-dialog-title"
+        aria-describedby="create-list-dialog-description"
       >
         <DialogContent
           sx={{
             width: { xs: "100%", sm: "600px" },
           }}
         >
-          <DialogTitle id="create-task-dialog-title">Create Task</DialogTitle>
+          <DialogTitle id="create-list-dialog-title">Create List</DialogTitle>
           <DialogContentText
-            id="create-task-dialog-description"
+            id="create-list-dialog-description"
             paddingBottom={2}
           >
-            Enter the details of the task
+            Enter the details of the List
           </DialogContentText>
           <form onSubmit={formik.handleSubmit}>
             <Stack direction="column" spacing={2}>
@@ -177,63 +144,21 @@ const CreateTaskDialog = ({
                 helperText={formik.touched.title && formik.errors.title}
               />
 
-              <TextField
-                type="text"
-                label="Description"
-                id="description"
-                name="description"
-                variant="outlined"
-                multiline
-                rows={4}
-                value={formik.values.description}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.description &&
-                  Boolean(formik.errors.description)
-                }
-                helperText={
-                  formik.touched.description && formik.errors.description
-                }
-              />
-
-              <TextField
-                type="datetime-local"
-                label="Due Date"
-                id="dueDate"
-                name="dueDate"
-                variant="outlined"
-                value={isoToDatetimeLocal(formik.values.dueDate)}
-                onChange={(e) => {
-                  formik.setFieldValue(
-                    "dueDate",
-                    datetimeLocalToIso(e.target.value),
-                  );
-                }}
-                onBlur={formik.handleBlur}
-                error={formik.touched.dueDate && Boolean(formik.errors.dueDate)}
-                helperText={formik.touched.dueDate && formik.errors.dueDate}
-              />
-
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+                <InputLabel id="demo-simple-select-label">Status</InputLabel>
                 <Select
                   type="text"
-                  label="Priority"
-                  id="priority"
-                  name="priority"
+                  label="Status"
+                  id="status"
+                  name="status"
                   variant="outlined"
-                  value={formik.values.priority}
+                  value={formik.values.status}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  error={
-                    formik.touched.priority && Boolean(formik.errors.priority)
-                  }
+                  error={formik.touched.status && Boolean(formik.errors.status)}
                 >
-                  <MenuItem value="low">low</MenuItem>
-                  <MenuItem value="medium">medium</MenuItem>
-                  <MenuItem value="high">high</MenuItem>
-                  <MenuItem value="critical">critical</MenuItem>
+                  <MenuItem value="active">active</MenuItem>
+                  <MenuItem value="archive">archive</MenuItem>
                 </Select>
               </FormControl>
 
@@ -281,4 +206,4 @@ const CreateTaskDialog = ({
   );
 };
 
-export default CreateTaskDialog;
+export default CreateListDialog;

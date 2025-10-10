@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormikHelpers, useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const CreateBoardButton = () => {
@@ -36,6 +36,7 @@ const CreateBoardButton = () => {
 
   const handleDialogClose = () => {
     setOpen(false);
+    setNotification(null);
   };
 
   const handleDialogOpen = () => {
@@ -54,6 +55,22 @@ const CreateBoardButton = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["board"] }),
   });
 
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      setNotification({
+        message: "Task created successfully",
+        messageType: "success",
+      });
+    }
+
+    if (mutation.isError) {
+      setNotification({
+        message: `${mutation.error}`,
+        messageType: "error",
+      });
+    }
+  }, [mutation.isSuccess, mutation.isError, mutation.error]);
+
   const handleCreateBoardSubmit = async (
     values: CreateBoardUIType,
     { setSubmitting, resetForm }: FormikHelpers<CreateBoardUIType>,
@@ -62,21 +79,10 @@ const CreateBoardButton = () => {
     setNotification(null);
     try {
       await mutation.mutateAsync(values);
-      setNotification({
-        message: "Board created successfully",
-        messageType: "success",
-      });
-
-      setTimeout(() => {
-        resetForm();
-        handleDialogClose();
-      }, 800);
+      resetForm();
+      handleDialogClose();
     } catch (error) {
       console.error("Error creating board", error);
-      setNotification({
-        message: "Error creating board",
-        messageType: "error",
-      });
     } finally {
       setSubmitting(false);
     }

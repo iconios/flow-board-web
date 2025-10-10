@@ -397,3 +397,29 @@ export const CreateTaskFormSchema = z.object({
 });
 
 export type CreateTaskFormType = z.infer<typeof CreateTaskFormSchema>;
+
+const GetTasksServerResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  tasks: z.array(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      description: z.string(),
+      dueDate: z.string(),
+      priority: z.string(),
+      position: z.number(),
+    }),
+  ),
+});
+
+export type GetTasksServerResponseType = z.infer<
+  typeof GetTasksServerResponseSchema
+>;
+
+export const CreateTaskInputSchema = CreateTaskFormSchema.extend({
+  listId: z.string(),
+  boardId: z.string(),
+});
+
+export type CreateTaskInputType = z.infer<typeof CreateTaskInputSchema>;

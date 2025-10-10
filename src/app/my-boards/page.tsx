@@ -60,6 +60,7 @@ const BoardsPage = () => {
     );
   }
 
+  // UI elements to display when there are boards
   if (boards && boards.length > 0) {
     return (
       <Container>
