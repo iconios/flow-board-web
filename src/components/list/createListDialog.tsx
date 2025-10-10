@@ -41,14 +41,14 @@ const CreateListDialog = ({
   );
   const queryClient = useQueryClient();
 
-  const handleDialogClose = () => {
-    onClose();
-  };
-
   const initialValues = {
     title: "",
     position: 0,
     status: "active" as const,
+  };
+
+  const handleDialogClose = () => {
+    onClose();
   };
 
   //  Mutation
