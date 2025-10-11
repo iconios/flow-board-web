@@ -1,6 +1,5 @@
 "use client";
 
-import { Add } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -10,7 +9,6 @@ import {
   DialogContentText,
   DialogTitle,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -194,6 +192,7 @@ const CreateListDialog = ({
                   variant="outlined"
                   sx={{ mt: 2 }}
                   onClick={handleDialogClose}
+                  disabled={mutation.isPending}
                 >
                   Cancel
                 </Button>

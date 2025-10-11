@@ -4,8 +4,15 @@ import {
   CreateListInputSchema,
   CreateListInputType,
   CreateListServerResponseType,
+  DeleteListInputSchema,
+  DeleteListInputType,
+  DeleteListServerResponseType,
+  EditListInputSchema,
+  EditListInputType,
+  EditListServerResponseType,
 } from "@/lib/list.types";
 import { GetListServerResponseType } from "@/lib/types";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { ZodError } from "zod";
 
@@ -21,7 +28,7 @@ const validateServerUrlAndToken = (token: string) => {
   }
 };
 
-// Fetch List(s) for a Board
+// Fetch List(s) for a Board Server Action
 const GetListsServerAction = async (boardId: string) => {
   const token = (await cookies()).get("token")?.value ?? "";
   validateServerUrlAndToken(token);
@@ -32,7 +39,7 @@ const GetListsServerAction = async (boardId: string) => {
         Authorization: `Bearer ${token}`,
       },
       next: {
-        tags: [`list:${boardId}`, "list"],
+        tags: ["list", `list:${boardId}`],
       },
     });
 
@@ -51,7 +58,7 @@ const GetListsServerAction = async (boardId: string) => {
   }
 };
 
-// Create a List for a Board
+// Create a List for a Board Server Action
 const CreateListServerAction = async (createListInput: CreateListInputType) => {
   const token = (await cookies()).get("token")?.value ?? "";
   validateServerUrlAndToken(token);
@@ -76,6 +83,9 @@ const CreateListServerAction = async (createListInput: CreateListInputType) => {
       throw new Error(`${result.message}`);
     }
 
+    revalidateTag("list");
+    revalidateTag(`list:${boardId}`);
+
     return result.list;
   } catch (error) {
     console.error("Error creating list", error);
@@ -88,4 +98,82 @@ const CreateListServerAction = async (createListInput: CreateListInputType) => {
   }
 };
 
-export { GetListsServerAction, CreateListServerAction };
+// Edit a List Server Action
+const EditListServerAction = async (editListInput: EditListInputType) => {
+  const token = (await cookies()).get("token")?.value ?? "";
+  validateServerUrlAndToken(token);
+
+  try {
+    const { listId, boardId, ...editListData } =
+      EditListInputSchema.parse(editListInput);
+    const response = await fetch(`${SERVER_BASE_URL}/list/${listId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editListData),
+    });
+
+    const result: EditListServerResponseType = await response.json();
+    console.log("Edited List from server action result", result);
+
+    if (!result.success || !response.ok) {
+      throw new Error(`${result.message}`);
+    }
+
+    revalidateTag("list");
+    revalidateTag(`list:${boardId}`);
+    return result.list;
+  } catch (error) {
+    console.error("Error editing list", error);
+
+    if (error instanceof ZodError) {
+      throw new Error("Error validating the edit list input");
+    }
+
+    throw new Error("Error editing list");
+  }
+};
+
+// Delete a List Server Action
+const DeleteListServerAction = async (deleteListInput: DeleteListInputType) => {
+  const token = (await cookies()).get("token")?.value ?? "";
+  validateServerUrlAndToken(token);
+
+  try {
+    const { listId, boardId } = DeleteListInputSchema.parse(deleteListInput);
+    const response = await fetch(`${SERVER_BASE_URL}/list/${listId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result: DeleteListServerResponseType = await response.json();
+    console.log("Deleted List from server action result", result);
+
+    if (!result.success || !response.ok) {
+      throw new Error(`${result.message}`);
+    }
+
+    revalidateTag("list");
+    revalidateTag(`list:${boardId}`);
+    return result.list;
+  } catch (error) {
+    console.error("Edit deleting list", error);
+
+    if (error instanceof ZodError) {
+      throw new Error("Error validating the delete list input");
+    }
+
+    throw new Error("Error deleting list");
+  }
+};
+
+export {
+  GetListsServerAction,
+  CreateListServerAction,
+  EditListServerAction,
+  DeleteListServerAction,
+};

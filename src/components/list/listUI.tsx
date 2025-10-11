@@ -6,8 +6,22 @@ import TaskInListUI from "../task/taskInListUI";
 import Link from "next/link";
 import CreateTaskDialog from "../task/createTaskDialog";
 import { Delete, Edit } from "@mui/icons-material";
+import { useState } from "react";
+import EditListDialog from "./editListDialog";
+import DeleteBListDialog from "./deleteListDialog";
 
 const ListUI = ({ list }: ListType) => {
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
   return (
     // Container for each list
     <Paper
@@ -34,12 +48,27 @@ const ListUI = ({ list }: ListType) => {
               flexDirection: "row",
             }}
           >
-            <IconButton onClick={() => console.log("Edit button clicked")}>
+            <IconButton onClick={() => setOpenEditDialog(true)}>
               <Edit />
             </IconButton>
-            <IconButton onClick={() => console.log("Delete button clicked")}>
+            <EditListDialog
+              dialogOpen={openEditDialog}
+              title={list.title}
+              position={list.position}
+              status={list.status}
+              boardId={list.boardId}
+              listId={list.id}
+              onClose={handleCloseEditDialog}
+            />
+            <IconButton onClick={() => setOpenDeleteDialog(true)}>
               <Delete />
             </IconButton>
+            <DeleteBListDialog
+              listId={list.id}
+              boardId={list.boardId}
+              onClose={handleCloseDeleteDialog}
+              dialogOpen={openDeleteDialog}
+            />
           </Box>
         </Box>
 
@@ -47,7 +76,7 @@ const ListUI = ({ list }: ListType) => {
         <Box minHeight={100}>
           {list.tasks.map((task) => (
             <Link
-              href={`/my-task/${task._id}`}
+              href={`/my-task/${task._id}/list/${list.id}`}
               key={task._id}
               style={{ textDecoration: "none" }}
             >

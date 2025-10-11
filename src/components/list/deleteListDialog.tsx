@@ -1,6 +1,7 @@
-import { DeleteBoardServerAction } from "@/actions/boards.server.action";
+import { DeleteListServerAction } from "@/actions/lists.server.action";
+import { DeleteListDialogInputType } from "@/lib/list.types";
 import NotificationBar from "@/lib/notificationBar";
-import { DeleteBoardInputType, NotificationBarType } from "@/lib/types";
+import { NotificationBarType } from "@/lib/types";
 import {
   Button,
   Dialog,
@@ -12,11 +13,12 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
-const DeleteBoardDialogBox = ({
+const DeleteBListDialog = ({
   dialogOpen,
+  listId,
   boardId,
   onClose,
-}: DeleteBoardInputType) => {
+}: DeleteListDialogInputType) => {
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -28,15 +30,17 @@ const DeleteBoardDialogBox = ({
   };
 
   const mutation = useMutation({
-    mutationKey: ["board"],
-    mutationFn: (boardId: string) => DeleteBoardServerAction(boardId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["board"] }),
+    mutationKey: [`list:${boardId}`],
+    mutationFn: (values: { listId: string; boardId: string }) =>
+      DeleteListServerAction(values),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["list", `list:${boardId}`] }),
   });
 
   useEffect(() => {
     if (mutation.isSuccess) {
       setNotification({
-        message: "Board deleted successfully",
+        message: "List deleted successfully",
         messageType: "success",
       });
     }
@@ -51,10 +55,10 @@ const DeleteBoardDialogBox = ({
 
   const handleDelete = async () => {
     try {
-      await mutation.mutateAsync(boardId);
+      await mutation.mutateAsync({ boardId, listId });
       handleDialogClose();
     } catch (error) {
-      console.error("Error deleting board", error);
+      console.error("Error deleting list", error);
     }
   };
 
@@ -69,8 +73,8 @@ const DeleteBoardDialogBox = ({
       <Dialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        aria-labelledby="delete-board-title"
-        aria-describedby="delete-board-desc"
+        aria-labelledby="delete-list-title"
+        aria-describedby="delete-list-desc"
         disableEscapeKeyDown={mutation.isPending}
         slotProps={{
           backdrop: {
@@ -80,11 +84,11 @@ const DeleteBoardDialogBox = ({
           },
         }}
       >
-        <DialogTitle>Delete Board</DialogTitle>
+        <DialogTitle>Delete List</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            This action cannot be undone. Are you sure you want to delete the
-            board?
+            This action cannot be undone. All the tasks in the list will also be
+            deleted. Are you sure you want to delete the list?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -96,6 +100,7 @@ const DeleteBoardDialogBox = ({
             color="error"
             variant="contained"
             autoFocus
+            disabled={mutation.isPending}
           >
             {mutation.isPending ? "Deleting..." : "Delete"}
           </Button>
@@ -105,4 +110,4 @@ const DeleteBoardDialogBox = ({
   );
 };
 
-export default DeleteBoardDialogBox;
+export default DeleteBListDialog;

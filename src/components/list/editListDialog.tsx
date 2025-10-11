@@ -1,37 +1,42 @@
-import { UpdateBoardServerAction } from "@/actions/boards.server.action";
-import NotificationBar from "@/lib/notificationBar";
+import { EditListServerAction } from "@/actions/lists.server.action";
 import {
-  EditBoardInputType,
-  EditBoardInitialValuesType,
-  EditBoardInitialValuesSchema,
-  NotificationBarType,
-} from "@/lib/types";
-import { useUserContext } from "@/lib/user.context";
+  EditListFormType,
+  EditListInitialValuesSchema,
+  EditListInitialValuesType,
+  EditListInputType,
+} from "@/lib/list.types";
+import NotificationBar from "@/lib/notificationBar";
+import { NotificationBarType } from "@/lib/types";
 import {
   Dialog,
+  DialogTitle,
   DialogContent,
   DialogContentText,
   Stack,
   TextField,
   DialogActions,
   Button,
-  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { FormikHelpers, useFormik } from "formik";
-import { useEffect, useMemo, useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-const EditBoardDialogBox = ({
+const EditListDialog = ({
   dialogOpen,
   title,
-  bg_color,
+  position,
+  status,
   boardId,
+  listId,
   onClose,
-}: EditBoardInputType) => {
+}: EditListFormType) => {
   // Initialize the variables and constants
   const queryClient = useQueryClient();
-  const { user } = useUserContext();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -43,10 +48,11 @@ const EditBoardDialogBox = ({
 
   const initialValues = useMemo(() => {
     return {
-      bg_color: bg_color,
-      title: title,
+      title,
+      position,
+      status,
     };
-  }, [bg_color, title]);
+  }, [title, position, status]);
 
   const {
     mutateAsync,
@@ -55,42 +61,43 @@ const EditBoardDialogBox = ({
     isError,
     error: serverError,
   } = useMutation({
-    mutationFn: (payload: {
-      boardId: string;
-      values: { title?: string; bg_color?: string };
-    }) => UpdateBoardServerAction(payload.boardId, payload.values),
+    mutationFn: (values: EditListInputType) => EditListServerAction(values),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["board", user.email],
+        queryKey: ["list", `list:${boardId}`],
       });
     },
   });
 
   useEffect(() => {
     if (isSuccess) {
+      handleDialogClose();
       setNotification({
-        message: "Board edited successfully",
+        message: "List edited successfully",
         messageType: "success",
       });
     }
 
     if (isError) {
       setNotification({
-        message: `${serverError?.message}` || "Failed to edit board",
+        message: `${serverError?.message}` || "Failed to edit list",
         messageType: "error",
       });
     }
   }, [isSuccess, isError, serverError]);
 
   const handleEditBoardSubmit = async (
-    values: EditBoardInitialValuesType,
-    { setSubmitting, resetForm }: FormikHelpers<EditBoardInitialValuesType>,
+    values: EditListInitialValuesType,
+    { setSubmitting, resetForm }: FormikHelpers<EditListInitialValuesType>,
   ) => {
     console.log(values);
     setNotification(null);
     try {
-      await mutateAsync({ boardId, values });
-      handleDialogClose();
+      await mutateAsync({
+        ...values,
+        boardId,
+        listId,
+      });
       resetForm({ values });
     } catch (error: any) {
       console.error("Error editing board", error);
@@ -102,7 +109,7 @@ const EditBoardDialogBox = ({
   const formik = useFormik({
     initialValues,
     enableReinitialize: true,
-    validationSchema: toFormikValidationSchema(EditBoardInitialValuesSchema),
+    validationSchema: toFormikValidationSchema(EditListInitialValuesSchema),
     onSubmit: handleEditBoardSubmit,
   });
 
@@ -125,9 +132,11 @@ const EditBoardDialogBox = ({
           py: 1,
         }}
       >
-        <DialogTitle>Edit Board</DialogTitle>
+        <DialogTitle>Edit List</DialogTitle>
         <DialogContent>
-          <DialogContentText>Enter the board fields values</DialogContentText>
+          <DialogContentText paddingBottom={2}>
+            Enter the list fields values
+          </DialogContentText>
           <form onSubmit={formik.handleSubmit}>
             <Stack direction="column" spacing={2}>
               <TextField
@@ -144,20 +153,37 @@ const EditBoardDialogBox = ({
                 helperText={formik.touched.title && formik.errors.title}
               />
 
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                <Select
+                  type="text"
+                  label="Status"
+                  id="status"
+                  name="status"
+                  variant="outlined"
+                  value={formik.values.status}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.status && Boolean(formik.errors.status)}
+                >
+                  <MenuItem value="active">active</MenuItem>
+                  <MenuItem value="archive">archive</MenuItem>
+                </Select>
+              </FormControl>
+
               <TextField
-                type="color"
-                label="Background Color"
-                id="bg_color"
-                name="bg_color"
+                type="number"
+                label="Position"
+                id="position"
+                name="position"
                 variant="outlined"
-                value={formik.values.bg_color}
+                value={formik.values.position}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={
-                  formik.touched.bg_color && Boolean(formik.errors.bg_color)
+                  formik.touched.position && Boolean(formik.errors.position)
                 }
-                helperText={formik.touched.bg_color && formik.errors.bg_color}
-                slotProps={{ inputLabel: { shrink: true } }}
+                helperText={formik.touched.position && formik.errors.position}
               />
             </Stack>
 
@@ -168,15 +194,16 @@ const EditBoardDialogBox = ({
                   color="primary"
                   variant="contained"
                   sx={{ mt: 2 }}
-                  disabled={formik.isSubmitting || isPending || !formik.dirty}
+                  disabled={isPending}
                 >
-                  {formik.isSubmitting ? "Updating..." : "Edit"}
+                  {isPending ? "Editing..." : "Edit"}
                 </Button>
                 <Button
                   color="secondary"
                   variant="outlined"
                   sx={{ mt: 2 }}
                   onClick={handleDialogClose}
+                  disabled={isPending}
                 >
                   Cancel
                 </Button>
@@ -189,4 +216,4 @@ const EditBoardDialogBox = ({
   );
 };
 
-export default EditBoardDialogBox;
+export default EditListDialog;

@@ -42,7 +42,7 @@ const ListsForBoard = ({
     if (isLoading) return;
 
     if (!user.email) {
-      router.push("/welcome");
+      return router.push("/welcome");
     }
   }, [user.email, router, isLoading]);
 
@@ -56,6 +56,10 @@ const ListsForBoard = ({
     setOpenCreateListDialog(false);
   };
 
+  const handleInviteToBoard = () => {
+    console.log("Invite to board clicked");
+  };
+
   // 1. Get the board ID and Fetch the board's lists
   const {
     isPending,
@@ -66,8 +70,6 @@ const ListsForBoard = ({
     queryKey: ["list", `list:${boardId}`],
     queryFn: () => GetListsServerAction(boardId),
     enabled: !!boardId,
-    staleTime: 30_000,
-    retry: 1,
   });
 
   if (isError) {
@@ -129,7 +131,18 @@ const ListsForBoard = ({
               bgcolor: theme.palette.primary.main,
               color: theme.palette.primary.contrastText,
               borderRadius: 0,
-              mb: { xs: 1, sm: 0 }
+              "&:hover": {
+                bgcolor: theme.palette.primary.dark, // Slightly darker on hover
+              },
+              "&:active": {
+                bgcolor: theme.palette.primary.main, // Keep same color when active/clicked
+              },
+              "&:focus": {
+                bgcolor: theme.palette.primary.main, // Keep same color when focused
+              },
+              "&:focus-visible": {
+                bgcolor: theme.palette.primary.main, // Keep same color for focus visibility
+              },
             }}
             onClick={handleDialogOpen}
           >
@@ -142,11 +155,23 @@ const ListsForBoard = ({
             sx={{
               py: 1,
               px: 2,
-              bgcolor: theme.palette.primary.main,
+              bgcolor: theme.palette.secondary.main,
               color: theme.palette.primary.contrastText,
               borderRadius: 0,
+              "&:hover": {
+                bgcolor: theme.palette.primary.dark, // Slightly darker on hover
+              },
+              "&:active": {
+                bgcolor: theme.palette.primary.main, // Keep same color when active/clicked
+              },
+              "&:focus": {
+                bgcolor: theme.palette.primary.main, // Keep same color when focused
+              },
+              "&:focus-visible": {
+                bgcolor: theme.palette.primary.main, // Keep same color for focus visibility
+              },
             }}
-            onClick={() => console.log("Invite to board clicked")}
+            onClick={handleInviteToBoard}
           >
             <GroupAdd />
             <Typography variant="subtitle1" sx={{ ml: 1 }}>

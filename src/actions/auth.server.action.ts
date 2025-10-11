@@ -49,6 +49,8 @@ const SignUpServerAction = async ({
   } catch (error) {
     console.error(`Error registering ${email}`, error);
 
+    if (error instanceof Error) throw error;
+
     throw new Error("Network error. Please try again");
   }
 };
@@ -64,7 +66,6 @@ const LoginServerAction = async ({
 
   console.log("Login server action called", {
     email,
-    password,
   });
 
   try {
@@ -79,17 +80,19 @@ const LoginServerAction = async ({
       }),
     });
 
-    const result: LoginServerResponseType = await response.json();
+    const result: Partial<LoginServerResponseType> = await response
+      .json()
+      .catch(() => ({}) as any);
 
-    if (!result.success) {
-      throw new Error(`${result.message}`);
+    if (!result.success || !response.ok) {
+      throw new Error(result.message);
     }
 
     const token = result.token;
     if (!token) throw new Error("Missing token");
     (await cookies()).set("token", token, {
       httpOnly: true, // protects against XSS
-      secure: true, // only over HTTPS (true in prod)
+      secure: process.env.NODE_ENV === "production", // only over HTTPS (true in prod)
       sameSite: "lax", // good default for app flows
       path: "/",
       maxAge: 60 * 60 * 24 * 1,
@@ -104,7 +107,9 @@ const LoginServerAction = async ({
   } catch (error) {
     console.error(`Error logging in ${email}`, error);
 
-    throw new Error("Network error. Please try again");
+    if (error instanceof Error) throw error;
+
+    throw new Error("Error logging in. Please try again");
   }
 };
 
@@ -138,6 +143,8 @@ const ForgotPasswordServerAction = async ({
     };
   } catch (error) {
     console.error(`Error in forgot password for ${email}`, error);
+
+    if (error instanceof Error) throw error;
 
     throw new Error("Network error. Please try again");
   }

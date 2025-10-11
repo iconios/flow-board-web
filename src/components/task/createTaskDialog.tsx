@@ -19,12 +19,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormikHelpers, useFormik } from "formik";
-import {
-  CreateTaskFormType,
-  CreateTaskFormSchema,
-  CreateTaskInputType,
-  NotificationBarType,
-} from "@/lib/types";
+import { NotificationBarType } from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import {
   datetimeLocalToIso,
@@ -33,6 +28,11 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CreateTasksServerAction } from "@/actions/tasks.server.action";
 import NotificationBar from "@/lib/notificationBar";
+import {
+  CreateTaskInputType,
+  CreateTaskFormType,
+  CreateTaskFormSchema,
+} from "@/lib/task.types";
 
 const CreateTaskDialog = ({
   listId,
@@ -70,7 +70,7 @@ const CreateTaskDialog = ({
     mutationFn: (newTask: CreateTaskInputType) =>
       CreateTasksServerAction(newTask),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [`list:${boardId}`] }),
+      queryClient.invalidateQueries({ queryKey: [`tasks:${listId}`, "tasks"] }),
   });
 
   useEffect(() => {
@@ -125,6 +125,8 @@ const CreateTaskDialog = ({
           messageType={notification.messageType}
         />
       )}
+
+      {/* Container for the "Add new task" button */}
       <Box
         bgcolor="#E5E4E2"
         sx={{
@@ -143,6 +145,8 @@ const CreateTaskDialog = ({
           Add new task
         </IconButton>
       </Box>
+
+      {/* Dialog box that opens when "Add new task" button is clicked */}
       <Dialog
         open={open}
         onClose={handleDialogClose}
@@ -269,6 +273,7 @@ const CreateTaskDialog = ({
                   variant="outlined"
                   sx={{ mt: 2 }}
                   onClick={handleDialogClose}
+                  disabled={mutation.isPending}
                 >
                   Cancel
                 </Button>

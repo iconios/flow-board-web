@@ -14,10 +14,12 @@ import {
   useTheme,
   useMediaQuery,
   Container,
+  Link,
 } from "@mui/material";
 import { useState } from "react";
 import EditBoardDialogBox from "./editBoardDialogBox";
 import DeleteBoardDialogBox from "./deleteBoardDialogBox";
+import { useUserContext } from "@/lib/user.context";
 
 const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
   // 1. Initialize the variables or constants
@@ -26,6 +28,7 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { user } = useUserContext();
 
   // Handler for the Vertical More button click
   const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -78,13 +81,19 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
         }}
       >
         {/* Color Header */}
-        <CardMedia
-          sx={{
-            height: isMobile ? 50 : 80,
-            backgroundColor: bg_color,
-            flexShrink: 0,
-          }}
-        />
+        <Link
+          href={`/my-lists/${boardId}?t=${title}&bg=${bg_color}&uf=${user.firstname}&um=${user.email}`}
+          key={boardId}
+          style={{ textDecoration: "none" }}
+        >
+          <CardMedia
+            sx={{
+              height: isMobile ? 50 : 80,
+              backgroundColor: bg_color,
+              flexShrink: 0,
+            }}
+          />
+        </Link>
 
         {/* Content Area */}
         <CardContent
@@ -108,39 +117,45 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
             }}
           >
             {/* Text Content */}
-            <Box
-              sx={{
-                flexGrow: 1,
-                minWidth: 0, // Enables text truncation
-              }}
+            <Link
+              href={`/my-lists/${boardId}?t=${title}&bg=${bg_color}&uf=${user.firstname}&um=${user.email}`}
+              key={boardId}
+              style={{ textDecoration: "none" }}
             >
-              <Typography
-                variant={isMobile ? "subtitle2" : "subtitle1"}
-                component="h3"
+              <Box
                 sx={{
-                  fontWeight: 600,
-                  mb: 0.5,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  lineHeight: 1.2,
+                  flexGrow: 1,
+                  minWidth: 0, // Enables text truncation
                 }}
               >
-                {title}
-              </Typography>
-              <Typography
-                variant={isMobile ? "caption" : "body2"}
-                color="text.secondary"
-                sx={{
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  lineHeight: 1.2,
-                }}
-              >
-                {userName}
-              </Typography>
-            </Box>
+                <Typography
+                  variant={isMobile ? "subtitle2" : "subtitle1"}
+                  component="h3"
+                  sx={{
+                    fontWeight: 600,
+                    mb: 0.5,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {title}
+                </Typography>
+                <Typography
+                  variant={isMobile ? "caption" : "body2"}
+                  color="text.secondary"
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {userName}
+                </Typography>
+              </Box>
+            </Link>
 
             {/* Menu Button */}
             <Box sx={{ flexShrink: 0, ml: 1 }}>

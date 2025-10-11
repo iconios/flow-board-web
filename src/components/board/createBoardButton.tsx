@@ -58,7 +58,7 @@ const CreateBoardButton = () => {
   useEffect(() => {
     if (mutation.isSuccess) {
       setNotification({
-        message: "Task created successfully",
+        message: "Board created successfully",
         messageType: "success",
       });
     }
