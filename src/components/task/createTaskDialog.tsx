@@ -17,7 +17,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormikHelpers, useFormik } from "formik";
 import { NotificationBarType } from "@/lib/types";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -66,33 +66,30 @@ const CreateTaskDialog = ({
 
   //  Mutation
   const mutation = useMutation({
-    mutationKey: [`list:${boardId}`],
+    mutationKey: [`tasks:${listId}`, "tasks"],
     mutationFn: (newTask: CreateTaskInputType) =>
       CreateTasksServerAction(newTask),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [`tasks:${listId}`, "tasks"] }),
-  });
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`lists:${boardId}`] });
       setNotification({
         message: "Task created successfully",
         messageType: "success",
       });
-    }
-
-    if (mutation.isError) {
+      formik.resetForm();
+      handleDialogClose();
+    },
+    onError: () => {
       setNotification({
         message: `${mutation.error?.message}` || "Failed to create task",
         messageType: "error",
       });
-    }
-  }, [mutation.isSuccess, mutation.isError, mutation.error]);
+    },
+  });
 
   // Form submission handler
   const handleCreateTaskSubmit = async (
     values: CreateTaskFormType,
-    { setSubmitting, resetForm }: FormikHelpers<CreateTaskFormType>,
+    { setSubmitting }: FormikHelpers<CreateTaskFormType>,
   ) => {
     console.log(values);
     const newTaskInput = {
@@ -102,8 +99,6 @@ const CreateTaskDialog = ({
     };
     try {
       await mutation.mutateAsync(newTaskInput);
-      resetForm();
-      handleDialogClose();
     } catch (error) {
       console.error("Mutation error", error);
     } finally {

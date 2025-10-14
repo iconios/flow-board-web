@@ -8,6 +8,8 @@ import ListUI from "./listUI";
 import NotificationBar from "@/lib/notificationBar";
 import {
   Box,
+  CircularProgress,
+  Container,
   IconButton,
   Paper,
   Stack,
@@ -18,6 +20,7 @@ import { useUserContext } from "@/lib/user.context";
 import { useRouter } from "next/navigation";
 import { Add, GroupAdd } from "@mui/icons-material";
 import CreateListDialog from "./createListDialog";
+import ListPageSkeleton from "../skeletons/listPageSkeleton";
 
 const ListsForBoard = ({
   boardId,
@@ -80,7 +83,13 @@ const ListsForBoard = ({
     return;
   }
 
-  if (isPending) return <div>Please wait...</div>;
+  if (isPending) {
+    return (
+      <Container>
+        <ListPageSkeleton />
+      </Container>
+    );
+  }
 
   return (
     <Box padding={{ xs: 2 }}>
@@ -128,6 +137,7 @@ const ListsForBoard = ({
             sx={{
               py: 1,
               px: 2,
+              mb: { xs: 1 },
               bgcolor: theme.palette.primary.main,
               color: theme.palette.primary.contrastText,
               borderRadius: 0,

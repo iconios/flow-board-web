@@ -18,7 +18,7 @@ const Page = async ({
 }) => {
   const { boardId } = await params;
 
-  const { t, bg } = searchParams;
+  const { t, bg } = await searchParams;
 
   return <ListsForBoard boardId={boardId} title={t} bgColor={bg} />;
 };

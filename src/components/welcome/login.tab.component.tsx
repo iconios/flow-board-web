@@ -6,6 +6,8 @@
 import {
   Box,
   Button,
+  CircularProgress,
+  Container,
   IconButton,
   InputAdornment,
   Stack,
@@ -27,6 +29,7 @@ import NotificationBar from "@/lib/notificationBar";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/lib/user.context";
 import { useMutation } from "@tanstack/react-query";
+import LoginTabSkeleton from "../skeletons/loginTabSkeleton";
 
 const LoginTabPanel = () => {
   // 1. Initialize all variables or constants
@@ -100,7 +103,11 @@ const LoginTabPanel = () => {
   });
 
   if (isLoading) {
-    return <p>Please wait...</p>;
+    return (
+      <Container>
+        <LoginTabSkeleton />
+      </Container>
+    );
   }
 
   return (

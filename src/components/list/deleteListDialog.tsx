@@ -56,7 +56,7 @@ const DeleteBListDialog = ({
   const handleDelete = async () => {
     try {
       await mutation.mutateAsync({ boardId, listId });
-      handleDialogClose();
+      setTimeout(() => handleDialogClose(), 2000);
     } catch (error) {
       console.error("Error deleting list", error);
     }

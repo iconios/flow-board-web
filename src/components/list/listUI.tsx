@@ -3,7 +3,6 @@
 import { ListType } from "@/lib/types";
 import { Box, IconButton, Paper, Typography } from "@mui/material";
 import TaskInListUI from "../task/taskInListUI";
-import Link from "next/link";
 import CreateTaskDialog from "../task/createTaskDialog";
 import { Delete, Edit } from "@mui/icons-material";
 import { useState } from "react";
@@ -75,13 +74,13 @@ const ListUI = ({ list }: ListType) => {
         {/* Container for all tasks */}
         <Box minHeight={100}>
           {list.tasks.map((task) => (
-            <Link
-              href={`/my-task/${task._id}/list/${list.id}`}
+            <TaskInListUI
+              title={task.title}
+              taskId={task._id}
+              listId={task.listId}
+              boardId={list.boardId}
               key={task._id}
-              style={{ textDecoration: "none" }}
-            >
-              <TaskInListUI title={task.title} key={task._id} />
-            </Link>
+            />
           ))}
         </Box>
       </Box>

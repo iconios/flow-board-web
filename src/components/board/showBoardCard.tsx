@@ -60,7 +60,7 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
 
   return (
     // Container for each Board card
-    <Container>
+    <Container maxWidth="xs">
       <Card
         sx={{
           height: 150,

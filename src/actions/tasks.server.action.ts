@@ -4,7 +4,13 @@ import {
   CreateTaskFormType,
   CreateTaskInputSchema,
   CreateTaskServerResponseType,
+  DeleteTaskInputSchema,
+  DeleteTaskInputType,
+  DeleteTaskServerResponseType,
   GetTasksServerResponseType,
+  UpdateTaskInputSchema,
+  UpdateTaskInputType,
+  UpdateTaskServerResponseType,
 } from "@/lib/task.types";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
@@ -97,4 +103,87 @@ const GetTasksServerAction = async (listId: string) => {
   }
 };
 
-export { CreateTasksServerAction, GetTasksServerAction };
+// Update a Task Server Action
+const UpdateTaskServerAction = async (updateTaskInput: UpdateTaskInputType) => {
+  const token = (await cookies()).get("token")?.value ?? "";
+  validateServerUrlAndToken(token);
+
+  try {
+    const { taskId, listId, ...updateTaskData } =
+      UpdateTaskInputSchema.parse(updateTaskInput);
+    const response = await fetch(`${SERVER_BASE_URL}/task/${taskId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updateTaskData),
+    });
+
+    const result: UpdateTaskServerResponseType = await response.json();
+    console.log("Result from update server action", result);
+
+    if (!result.success || !response.ok) {
+      console.error("Error from update task action", result.message);
+      throw new Error(`${result.message}`);
+    }
+
+    revalidateTag("tasks");
+    revalidateTag(`tasks:${listId}`);
+    return result.task;
+  } catch (error) {
+    console.error("Error updating task", error);
+
+    if (error instanceof ZodError) {
+      throw new Error("Error validating update task data");
+    }
+
+    if (error instanceof Error) throw error;
+
+    throw new Error("Error updating task");
+  }
+};
+
+// Delete a Task Server Action
+const DeleteTaskServerAction = async (deleteTaskData: DeleteTaskInputType) => {
+  const token = (await cookies()).get("token")?.value ?? "";
+  validateServerUrlAndToken(token);
+
+  try {
+    const { taskId, listId } = DeleteTaskInputSchema.parse(deleteTaskData);
+    const response = await fetch(`${SERVER_BASE_URL}/task/${taskId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result: DeleteTaskServerResponseType = await response.json();
+    console.log("Result from delete server action", result);
+
+    if (!result.success || !response.ok) {
+      throw new Error(`${result.message}`);
+    }
+
+    revalidateTag("tasks");
+    revalidateTag(`tasks:${listId}`);
+    return result.message;
+  } catch (error) {
+    console.error("Error deleting task", error);
+
+    if (error instanceof ZodError) {
+      throw new Error("Error validating delete task data");
+    }
+
+    if (error instanceof Error) throw error;
+
+    throw new Error("Error deleting task");
+  }
+};
+
+export {
+  CreateTasksServerAction,
+  GetTasksServerAction,
+  UpdateTaskServerAction,
+  DeleteTaskServerAction,
+};

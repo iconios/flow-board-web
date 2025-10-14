@@ -15,6 +15,7 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  DialogTitle,
   IconButton,
   Paper,
   Stack,
@@ -111,7 +112,13 @@ const CreateBoardButton = () => {
           messageType={notification.messageType}
         />
       )}
-      <Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <IconButton onClick={handleDialogOpen}>
           <Add />
           <Typography>Create a Board</Typography>
@@ -126,6 +133,7 @@ const CreateBoardButton = () => {
           py: 2,
         }}
       >
+        <DialogTitle>Create a Board</DialogTitle>
         <DialogContent
           sx={{
             width: {
@@ -135,7 +143,9 @@ const CreateBoardButton = () => {
             },
           }}
         >
-          <DialogContentText>Enter board details</DialogContentText>
+          <DialogContentText paddingBottom={2}>
+            Enter board details
+          </DialogContentText>
           <form onSubmit={formik.handleSubmit}>
             <Stack direction="column" spacing={2}>
               <TextField

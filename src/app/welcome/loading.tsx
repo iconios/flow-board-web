@@ -1,7 +1,9 @@
 "use client";
 
+import WelcomePageSkeleton from "@/components/skeletons/welcomePageSkeleton";
+
 const Loading = () => {
-  return <p>Loading...</p>;
+  return <WelcomePageSkeleton />;
 };
 
 export default Loading;

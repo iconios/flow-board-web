@@ -12,12 +12,12 @@ import { GetBoardsServerAction } from "@/actions/boards.server.action";
 import CreateBoardButton from "@/components/board/createBoardButton";
 import BoardCard from "@/components/board/showBoardCard";
 import { useUserContext } from "@/lib/user.context";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NotificationBar from "@/lib/notificationBar";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
+import BoardPageSkeleton from "@/components/skeletons/boardPageSkeleton";
 
 const BoardsPage = () => {
   // 1. Initialize the needed variables and constants
@@ -47,7 +47,9 @@ const BoardsPage = () => {
     return <NotificationBar message={error.message} messageType="error" />;
 
   // 3. Show the boards info
-  if (isPending) return <div>Please wait...</div>;
+  if (isPending) {
+    return <BoardPageSkeleton />;
+  }
 
   const boards = data?.data;
 
@@ -65,13 +67,7 @@ const BoardsPage = () => {
     return (
       <Container>
         <CreateBoardButton />
-        <Box
-          sx={{
-            borderStyle: "solid",
-            borderWidth: "2px",
-            borderColor: "black",
-          }}
-        >
+        <Box>
           <Box
             display="flex"
             flexDirection={{ xs: "column", sm: "row" }}
@@ -80,9 +76,6 @@ const BoardsPage = () => {
             alignItems="stretch"
             gap={2}
             sx={{
-              borderStyle: "solid",
-              borderWidth: "2px",
-              borderColor: "blue",
               mb: 4,
             }}
           >

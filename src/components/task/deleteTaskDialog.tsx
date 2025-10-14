@@ -1,22 +1,25 @@
-import { DeleteBoardServerAction } from "@/actions/boards.server.action";
+import { DeleteTaskServerAction } from "@/actions/tasks.server.action";
 import NotificationBar from "@/lib/notificationBar";
-import { DeleteBoardInputType, NotificationBarType } from "@/lib/types";
+import { DeleteTaskFormInputType } from "@/lib/task.types";
+import { NotificationBarType } from "@/lib/types";
 import {
-  Button,
   Dialog,
-  DialogActions,
+  DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogTitle,
+  DialogActions,
+  Button,
 } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 
-const DeleteBoardDialogBox = ({
+const DeleteTaskDialog = ({
   dialogOpen,
+  listId,
+  taskId,
   boardId,
   onClose,
-}: DeleteBoardInputType) => {
+}: DeleteTaskFormInputType) => {
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -28,36 +31,32 @@ const DeleteBoardDialogBox = ({
   };
 
   const mutation = useMutation({
-    mutationKey: ["board"],
-    mutationFn: (boardId: string) => DeleteBoardServerAction(boardId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["board"] }),
-  });
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
+    mutationKey: ["tasks", `tasks:${listId}`],
+    mutationFn: (values: { listId: string; taskId: string }) =>
+      DeleteTaskServerAction(values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`lists:${boardId}`] });
       setNotification({
-        message: "Board deleted successfully",
+        message: "Task deleted successfully",
         messageType: "success",
       });
-    }
-
-    if (mutation.isError) {
+    },
+    onError: () => {
       setNotification({
         message: `${mutation.error}`,
         messageType: "error",
       });
-    }
-  }, [mutation.isSuccess, mutation.isError, mutation.error]);
+    },
+  });
 
   const handleDelete = async () => {
     try {
-      await mutation.mutateAsync(boardId);
-      handleDialogClose();
+      await mutation.mutateAsync({ taskId, listId });
+      setTimeout(() => handleDialogClose(), 2000);
     } catch (error) {
-      console.error("Error deleting board", error);
+      console.error("Error deleting task", error);
     }
   };
-
   return (
     <>
       {notification && (
@@ -69,8 +68,8 @@ const DeleteBoardDialogBox = ({
       <Dialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        aria-labelledby="delete-board-title"
-        aria-describedby="delete-board-desc"
+        aria-labelledby="delete-task-title"
+        aria-describedby="delete-task-desc"
         disableEscapeKeyDown={mutation.isPending}
         slotProps={{
           backdrop: {
@@ -80,12 +79,11 @@ const DeleteBoardDialogBox = ({
           },
         }}
       >
-        <DialogTitle>Delete Board</DialogTitle>
+        <DialogTitle>Delete Task</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            This action cannot be undone. All the lists and the tasks in the
-            board will also be deleted. Are you sure you want to delete the
-            board?
+            This action cannot be undone. Are you sure you want to delete the
+            task?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -107,4 +105,4 @@ const DeleteBoardDialogBox = ({
   );
 };
 
-export default DeleteBoardDialogBox;
+export default DeleteTaskDialog;
