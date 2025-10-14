@@ -33,6 +33,7 @@ import { FormikHelpers, useFormik } from "formik";
 import { useEffect, useMemo, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import TaskPageSkeleton from "../skeletons/taskPageSkeleton";
+import CommentsInTask from "./commentsInTask";
 
 const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
   const [notification, setNotification] = useState<NotificationBarType | null>(
@@ -307,6 +308,8 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
                 </Button>
               </Box>
             )}
+
+            <CommentsInTask taskId={taskId} />
 
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Priority</InputLabel>
