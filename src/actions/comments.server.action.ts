@@ -95,6 +95,7 @@ const GetCommentsServerAction = async (taskId: string) => {
       throw new Error(`${result.message}`);
     }
 
+    console.log("Comments from server", result.comments);
     return result.comments ?? [];
   } catch (error) {
     console.error("Error fetching comments", error);
@@ -166,7 +167,9 @@ const DeleteCommentServerAction = async (
       },
     });
 
-    const result: DeleteCommentServerResponseType = await response.json();
+    const result: Partial<DeleteCommentServerResponseType> = await response
+      .json()
+      .catch(() => ({}) as any);
     console.log("Result from DeleteCommentServerAction", result);
 
     if (!result.success || !response.ok) {

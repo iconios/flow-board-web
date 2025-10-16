@@ -19,7 +19,6 @@ import { Check, Close } from "@mui/icons-material";
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   FormControl,
   InputLabel,
@@ -33,7 +32,7 @@ import { FormikHelpers, useFormik } from "formik";
 import { useEffect, useMemo, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import TaskPageSkeleton from "../skeletons/taskPageSkeleton";
-import CommentsInTask from "./commentsInTask";
+import CommentsInTask from "../comments/commentsInTask";
 
 const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
   const [notification, setNotification] = useState<NotificationBarType | null>(

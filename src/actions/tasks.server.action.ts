@@ -151,6 +151,7 @@ const DeleteTaskServerAction = async (deleteTaskData: DeleteTaskInputType) => {
 
   try {
     const { taskId, listId } = DeleteTaskInputSchema.parse(deleteTaskData);
+    console.log("Task id received", taskId);
     const response = await fetch(`${SERVER_BASE_URL}/task/${taskId}`, {
       method: "DELETE",
       headers: {

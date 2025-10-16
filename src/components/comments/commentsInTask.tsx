@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Container,
+  List,
   Skeleton,
   Stack,
   TextField,
@@ -106,49 +107,51 @@ const CommentsInTask = ({ taskId }: { taskId: string }) => {
           messageType={notification.messageType}
         />
       )}
-        <Box>
-          <Stack direction="column" spacing={1}>
-            <TextField
-              type="text"
-              label="Comments"
-              id="content"
-              name="content"
+      <Box>
+        <Stack direction="column" spacing={1}>
+          <TextField
+            type="text"
+            label="Comments"
+            id="content"
+            name="content"
+            variant="outlined"
+            value={formik.values.content}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.content && Boolean(formik.errors.content)}
+            helperText={formik.touched.content && formik.errors.content}
+          />
+          <Box>
+            <Button
+              type="button"
+              startIcon={<Create />}
+              variant="contained"
+              disabled={formik.isSubmitting || !formik.values.content.trim()}
+              onClick={() => formik.handleSubmit()}
+              sx={{ mr: 2 }}
+            >
+              Create
+            </Button>
+            <Button
+              type="reset"
+              onClick={() => formik.resetForm()}
+              startIcon={<Cancel />}
               variant="outlined"
-              value={formik.values.content}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.content && Boolean(formik.errors.content)}
-              helperText={formik.touched.content && formik.errors.content}
-            />
-            <Box>
-              <Button
-                type="button"
-                startIcon={<Create />}
-                variant="contained"
-                disabled={formik.isSubmitting || !formik.values.content.trim()}
-                onClick={() => formik.handleSubmit()}
-                sx={{ mr: 2 }}
-              >
-                Create
-              </Button>
-              <Button
-                type="reset"
-                onClick={() => formik.resetForm()}
-                startIcon={<Cancel />}
-                variant="outlined"
-                disabled={formik.isSubmitting || !formik.values.content.trim()}
-              >
-                Cancel
-              </Button>
-            </Box>
-          </Stack>
-        </Box>
+              disabled={formik.isSubmitting || !formik.values.content.trim()}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </Stack>
+      </Box>
       {comments?.length === 0 ? (
         <p>No comments yet - create one!</p>
       ) : (
-        comments?.map((comment) => (
-          <CommentContent comment={comment} key={comment.id} />
-        ))
+        <List sx={{ width: "100%", maxWidth: 600 }}>
+          {comments?.map((comment) => (
+            <CommentContent comment={comment} key={comment.id} />
+          ))}
+        </List>
       )}
     </Box>
   );

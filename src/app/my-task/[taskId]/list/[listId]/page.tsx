@@ -7,6 +7,7 @@ const TaskPage = async ({
 }) => {
   const { taskId, listId } = await params;
 
+  console.log("Show task id", taskId);
   return <ShowTask taskId={taskId} listId={listId} />;
 };
 

@@ -92,3 +92,24 @@ export const CommentContentSchema = z.object({
 });
 
 export type CommentContentType = z.infer<typeof CommentContentSchema>;
+
+const DeleteCommentDialogInputSchema = z.object({
+  dialogOpen: z.boolean(),
+  taskId: z.string(),
+  commentId: z.string(),
+  onClose: z.function(),
+});
+
+export type DeleteCommentDialogInputType = z.infer<
+  typeof DeleteCommentDialogInputSchema
+>;
+
+const EditCommentFormSchema = z.object({
+  dialogOpen: z.boolean(),
+  content: z.string(),
+  taskId: z.string(),
+  commentId: z.string(),
+  onClose: z.function(),
+});
+
+export type EditCommentFormType = z.infer<typeof EditCommentFormSchema>;
