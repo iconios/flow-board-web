@@ -78,6 +78,7 @@ const CommentContent = ({ comment }: { comment: CommentType }) => {
               commentId={comment.id}
               onClose={() => setOpenEditDialog(false)}
             />
+
             <IconButton onClick={() => setOpenDeleteDialog(true)}>
               <Delete />
             </IconButton>

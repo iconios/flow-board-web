@@ -33,12 +33,16 @@ import { useEffect, useMemo, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import TaskPageSkeleton from "../skeletons/taskPageSkeleton";
 import CommentsInTask from "../comments/commentsInTask";
+import { useUserContext } from "@/lib/user.context";
+import { useRouter } from "next/navigation";
 
 const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
   const queryClient = useQueryClient();
+  const { user, isLoading } = useUserContext();
+  const router = useRouter();
 
   const {
     isError,
@@ -52,13 +56,20 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
   });
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
+    if (!user.firstname) {
+      router.push("/welcome");
+    }
     if (isError) {
       setNotification({
         message: `${error.message}`,
         messageType: "error",
       });
     }
-  }, [isError, error]);
+  }, [isError, error, isLoading, user.firstname, router]);
 
   const task = tasks?.find((task) => task.id === taskId);
   console.log("Task to show", task);

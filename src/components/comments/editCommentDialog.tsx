@@ -58,10 +58,6 @@ const EditCommentDialog = ({
         queryKey: ["comments", `comments:${taskId}`],
       });
       handleDialogClose();
-      setNotification({
-        message: "Comment edited successfully",
-        messageType: "success",
-      });
     },
     onError: () => {
       setNotification({

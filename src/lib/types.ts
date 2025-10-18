@@ -55,6 +55,12 @@ export const RegisterFormValuesSchema = z.object({
 
 export type RegisterFormValuesType = z.infer<typeof RegisterFormValuesSchema>;
 
+export const InviteToBoardSchema = RegisterFormValuesSchema.pick({
+  email: true,
+});
+
+export type InviteToBoardType = z.infer<typeof InviteToBoardSchema>;
+
 const TabsContentsSchema = z.object({
   login: React.Component,
   register: React.Component,
@@ -382,3 +388,23 @@ export type ListPageSearchParamsType = {
   uf: string;
   ue: string;
 };
+
+export const BoardMemberRoleSchema = z.object({
+  role: z.string(),
+});
+
+export type BoardMemberRoleType = z.infer<typeof BoardMemberRoleSchema>;
+
+const GetUserServerResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+  data: z.object({
+    id: z.string(),
+    firstname: z.string(),
+    email: z.string(),
+  }),
+});
+
+export type GetUserServerResponseType = z.infer<
+  typeof GetUserServerResponseSchema
+>;

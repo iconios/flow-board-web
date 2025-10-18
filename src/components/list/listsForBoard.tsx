@@ -8,19 +8,20 @@ import ListUI from "./listUI";
 import NotificationBar from "@/lib/notificationBar";
 import {
   Box,
-  CircularProgress,
   Container,
   IconButton,
-  Paper,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
 import { useUserContext } from "@/lib/user.context";
 import { useRouter } from "next/navigation";
-import { Add, GroupAdd } from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import CreateListDialog from "./createListDialog";
 import ListPageSkeleton from "../skeletons/listPageSkeleton";
+import BoardTitleUserWelcome from "@/lib/boardTitleUserWelcome";
+import CustomSizeSwitch from "@/lib/customSwitch";
+import InviteToBoard from "../board/inviteToBoard";
 
 const ListsForBoard = ({
   boardId,
@@ -39,6 +40,7 @@ const ListsForBoard = ({
   const theme = useTheme();
   const router = useRouter();
   console.log("Board Bg color", bgColor);
+  const [showInvite, setShowInvite] = useState(false);
 
   // Check if user is authenticated
   useEffect(() => {
@@ -57,10 +59,6 @@ const ListsForBoard = ({
 
   const handleDialogClose = () => {
     setOpenCreateListDialog(false);
-  };
-
-  const handleInviteToBoard = () => {
-    console.log("Invite to board clicked");
   };
 
   // 1. Get the board ID and Fetch the board's lists
@@ -100,32 +98,7 @@ const ListsForBoard = ({
         />
       )}
       {/* Container for Board title and user welcome message */}
-      <Paper
-        sx={{
-          bgcolor: { bgColor },
-          py: 1,
-          px: 2,
-          mb: 0.5,
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          justifyContent: "space-between",
-          borderTopRightRadius: 1,
-          borderTopLeftRadius: 1,
-          borderBottomRightRadius: 0,
-          borderBottomLeftRadius: 0,
-        }}
-      >
-        {/* Board title for lists */}
-        <Typography variant="h5" fontWeight={600}>
-          {title}
-        </Typography>
-        {/* Board user welcome message */}
-        <Box>
-          <Typography variant="body1" fontWeight={600}>
-            Hello {user.firstname}
-          </Typography>
-        </Box>
-      </Paper>
+      <BoardTitleUserWelcome title={title} bgColor={bgColor} />
 
       {/* Container for "Add new list" and "Invite to Board" buttons */}
       <Box bgcolor={theme.palette.background.paper} padding={2}>
@@ -155,39 +128,23 @@ const ListsForBoard = ({
               },
             }}
             onClick={handleDialogOpen}
+            disabled={showInvite}
           >
             <Add />
             <Typography variant="subtitle1" sx={{ ml: 1 }}>
               Add new List
             </Typography>
           </IconButton>
-          <IconButton
-            sx={{
-              py: 1,
-              px: 2,
-              bgcolor: theme.palette.secondary.main,
-              color: theme.palette.primary.contrastText,
-              borderRadius: 0,
-              "&:hover": {
-                bgcolor: theme.palette.primary.dark, // Slightly darker on hover
-              },
-              "&:active": {
-                bgcolor: theme.palette.primary.main, // Keep same color when active/clicked
-              },
-              "&:focus": {
-                bgcolor: theme.palette.primary.main, // Keep same color when focused
-              },
-              "&:focus-visible": {
-                bgcolor: theme.palette.primary.main, // Keep same color for focus visibility
-              },
-            }}
-            onClick={handleInviteToBoard}
-          >
-            <GroupAdd />
-            <Typography variant="subtitle1" sx={{ ml: 1 }}>
+          <div style={{ display: "flex", alignItems: "flex-start" }}>
+            <CustomSizeSwitch
+              switchSize="medium"
+              checked={showInvite}
+              onChange={() => setShowInvite(!showInvite)}
+            />
+            <Typography variant="h6" sx={{ fontWeight: 600, ml: 1, pt: 0.5 }}>
               Invite to Board
             </Typography>
-          </IconButton>
+          </div>
         </Stack>
       </Box>
 
@@ -201,14 +158,18 @@ const ListsForBoard = ({
       {/* Container to display all the Lists in a Board */}
       <Box
         sx={{
-          display: "flex",
           flexDirection: { xs: "column", md: "row" },
           justifyContent: "space-evenly",
         }}
+        display={showInvite ? "none" : "flex"}
       >
         {lists.map((list) => (
           <ListUI list={list} key={list.id} />
         ))}
+      </Box>
+
+      <Box display={showInvite ? "block" : "none"}>
+        <InviteToBoard boardId={boardId} />
       </Box>
     </Box>
   );
