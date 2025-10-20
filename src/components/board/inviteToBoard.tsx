@@ -8,7 +8,6 @@ import {
 import {
   Box,
   Button,
-  List,
   Paper,
   Stack,
   TextField,
@@ -21,14 +20,17 @@ import { useState } from "react";
 import { CreateBoardMemberServerAction } from "@/actions/board.member.server.action";
 import { CreateBoardMemberInputType } from "@/lib/member.types";
 import NotificationBar from "@/lib/notificationBar";
-import BoardMember from "./boardMember";
+import BoardMembersList from "./boardMembersList";
+import { useUserContext } from "@/lib/user.context";
 
-const InviteToBoard = ({ boardId }: { boardId: string }) => {
+const InviteToBoard = ({ boardId, userId }: { boardId: string, userId: string }) => {
+  const {user} = useUserContext();
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
-
+  console.log("Board user id", userId);
+  console.log("Logged-in user id", user.id)
   const mutation = useMutation({
     mutationKey: ["board-member-invite"],
     mutationFn: (values: CreateBoardMemberInputType) =>
@@ -119,8 +121,9 @@ const InviteToBoard = ({ boardId }: { boardId: string }) => {
                 onBlur={formik.handleBlur}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
+                disabled={ userId !== user.id }
               />
-              <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+              <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={ userId !== user.id }>
                 Send Invite
               </Button>
             </Stack>
@@ -137,7 +140,7 @@ const InviteToBoard = ({ boardId }: { boardId: string }) => {
           <Typography variant="h5" style={{ fontWeight: 600 }}>
             Members
           </Typography>
-          <BoardMember boardId={boardId} />
+          <BoardMembersList boardId={boardId} />
         </Paper>
       </Stack>
     </Box>

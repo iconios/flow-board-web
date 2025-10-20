@@ -6,7 +6,6 @@
 import {
   Box,
   Button,
-  CircularProgress,
   Container,
   IconButton,
   InputAdornment,
@@ -48,6 +47,22 @@ const LoginTabPanel = () => {
     mutationKey: ["user"],
     mutationFn: (values: { email: string; password: string }) =>
       LoginServerAction(values),
+    onSuccess: (result) => {
+      // Update the state variable with the result
+      LogIn(result.id, result.email, result.firstname);
+      setNotification({
+        message: "Login successful",
+        messageType: "success",
+      });
+      formik.resetForm();
+      router.push("/my-boards");
+    },
+    onError: (error) => {
+      setNotification({
+        message: `${error.message}`,
+        messageType: "error",
+      });
+    },
     retry: 0,
   });
 
@@ -58,29 +73,9 @@ const LoginTabPanel = () => {
     console.log(values);
     setNotification(null);
     try {
-      // Call the Login server action, validate the result and notify user
-      const data = await mutation.mutateAsync(values);
-
-      // Update the state variable with the result
-      LogIn(data.user.email, data.user.firstname);
-
-      setNotification({
-        message: "Login successful",
-        messageType: "success",
-      });
-
-      console.log("User details", data.user);
-
-      resetForm();
-      setTimeout(() => {
-        router.push("/my-boards");
-      }, 800);
+      await mutation.mutateAsync(values);
     } catch (error: any) {
-      console.error("Server error message", error);
-      setNotification({
-        message: `${error.message}`,
-        messageType: "error",
-      });
+      console.error("Server error message", error);      
     } finally {
       setSubmitting(false);
     }

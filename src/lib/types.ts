@@ -82,6 +82,7 @@ export const BoardCardSchema = z.object({
     .min(2, "Minimum two characters required")
     .nonempty("Title cannot be empty"),
   boardId: z.string(),
+  boardUserId: z.string(),
 });
 
 export type BoardCardType = z.infer<typeof BoardCardSchema>;
@@ -89,6 +90,7 @@ export type BoardCardType = z.infer<typeof BoardCardSchema>;
 export const CreateBoardUISchema = BoardCardSchema.omit({
   userName: true,
   boardId: true,
+  boardUserId: true,
 });
 
 export type CreateBoardUIType = z.infer<typeof CreateBoardUISchema>;
@@ -126,19 +128,18 @@ const LoginServerResponseSchema = SignUpAuthServerResponseSchema.extend({
   token: z.string().optional(),
   user: z
     .object({
+      id: z.string(),
       email: z.string(),
       firstname: z.string(),
     })
-    .optional(),
 });
 
 export type LoginServerResponseType = z.infer<typeof LoginServerResponseSchema>;
 
 const LoginAuthOutputSchema = z.object({
-  user: z.object({
+    id: z.string(),
     email: z.string(),
     firstname: z.string(),
-  }),
 });
 
 export type LoginAuthOutputType = z.infer<typeof LoginAuthOutputSchema>;
@@ -159,26 +160,28 @@ const UserDataSchema = z.object({
 export type UserDataType = z.infer<typeof UserDataSchema>;
 
 const BoardsSchema = z.object({
-  boardId: z.string().optional(),
-  bgColor: z.string(),
+  _id: z.string(),
+  bg_color: z.string(),
+  title: z.string(),
   user: z.object({
+    _id: z.string(),
     firstname: z.string(),
     email: z.string(),
   }),
-  title: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
 });
 
 export type BoardsType = z.infer<typeof BoardsSchema>;
 
 export const UserContextSchema = z.object({
   user: z.object({
+    id: z.string(),
     email: z.string(),
     firstname: z.string(),
   }),
   LogIn: z.function({
-    input: [z.string(), z.string()],
+    input: [z.string(), z.string(), z.string()],
     output: z.void(),
   }),
   LogOut: z.function({
@@ -209,16 +212,16 @@ const GetBoardsServerResponseSchema = z.object({
   boards: z
     .array(
       z.object({
+        _id: z.string(),
         title: z.string(),
         bg_color: z.string(),
-        user_id: z.object({
+        user: z.object({
+          _id: z.string(),
           email: z.string(),
           firstname: z.string(),
         }),
         created_at: z.string(),
         updated_at: z.string(),
-        lists: z.array(z.string()),
-        _id: z.string().optional(),
       }),
     )
     .optional(),
@@ -229,6 +232,7 @@ export type GetBoardsServerResponseType = z.infer<
 >;
 
 const GetBoardsOutputSchema = z.object({
+  message: z.string(),
   data: z.array(BoardsSchema),
 });
 
@@ -385,8 +389,7 @@ export type ListType = z.infer<typeof ListSchema>;
 export type ListPageSearchParamsType = {
   t: string;
   bg: string;
-  uf: string;
-  ue: string;
+  uid: string;
 };
 
 export const BoardMemberRoleSchema = z.object({

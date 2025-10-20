@@ -78,11 +78,10 @@ const LoginServerAction = async ({
         email,
         password,
       }),
+      cache: "no-store"
     });
 
-    const result: Partial<LoginServerResponseType> = await response
-      .json()
-      .catch(() => ({}) as any);
+    const result: LoginServerResponseType = await response.json();
 
     if (!result.success || !response.ok) {
       throw new Error(result.message);
@@ -98,12 +97,7 @@ const LoginServerAction = async ({
       maxAge: 60 * 60 * 24 * 1,
     });
 
-    return {
-      user: {
-        email: result.user!.email,
-        firstname: result.user!.firstname,
-      },
-    };
+    return result.user;
   } catch (error) {
     console.error(`Error logging in ${email}`, error);
 

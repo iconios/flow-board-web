@@ -1,3 +1,4 @@
+// Component for each board member UI
 import { MemberType } from "@/lib/member.types";
 import { BoardMemberRoleType, BoardMemberRoleSchema } from "@/lib/types";
 import { Remove } from "@mui/icons-material";
@@ -15,11 +16,14 @@ import {
   Divider,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
+import { useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import RemoveMemberDialog from "./removeMemberDialog";
+import { useUserContext } from "@/lib/user.context";
 
 const MemberUI = ({ member }: MemberType) => {
-  if (!member) return <p>Nothing to render!</p>;
-  console.log("Member detail to render", member);
+  const [openDialog, setOpenDialog] = useState(false);
+  const {user} = useUserContext();
 
   const firstAlphabet = member.user.firstname[0];
   const initialValues = {
@@ -40,6 +44,8 @@ const MemberUI = ({ member }: MemberType) => {
     validationSchema: toFormikValidationSchema(BoardMemberRoleSchema),
     onSubmit: handleRole,
   });
+  
+  if (!member) return <p>Nothing to render!</p>;
 
   return (
     <>
@@ -65,6 +71,7 @@ const MemberUI = ({ member }: MemberType) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={formik.touched.role && Boolean(formik.errors.role)}
+                  disabled={user.id !== member.boardOwnerUserId}
                 >
                   <MenuItem value="member">Member</MenuItem>
                   <MenuItem value="admin">Admin</MenuItem>
@@ -73,12 +80,22 @@ const MemberUI = ({ member }: MemberType) => {
               <Button
                 variant="text"
                 startIcon={<Remove />}
-                onClick={() => console.log("Remove button clicked")}
-                sx={{ ml: 2 }}
+                onClick={() => setOpenDialog(true)}
+                sx={{ 
+                  ml: 2,
+                  display: user.id !== member.boardOwnerUserId ? "none" : "block",
+                }}
               >
                 Remove
               </Button>
             </Stack>
+            <RemoveMemberDialog
+              memberName={member.user.firstname}
+              dialogOpen={openDialog}
+              onClose={() => setOpenDialog(false)}
+              memberId={member.memberId}
+              boardId={member.boardId}
+            />
           </form>
         </Stack>
       </ListItem>

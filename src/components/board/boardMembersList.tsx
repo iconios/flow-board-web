@@ -4,13 +4,13 @@ import { GetBoardMembersServerAction } from "@/actions/board.member.server.actio
 // Component for each board member
 
 import { GetBoardMembersType } from "@/lib/member.types";
-import { List } from "@mui/material";
+import { List, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import BoardMembersSkeleton from "../skeletons/boardMembersSkeleton";
 import NotificationBar from "@/lib/notificationBar";
 import MemberUI from "./memberUI";
 
-const BoardMember = ({ boardId }: { boardId: string }) => {
+const BoardMembersList = ({ boardId }: { boardId: string }) => {
   const {
     isPending,
     isError,
@@ -20,11 +20,13 @@ const BoardMember = ({ boardId }: { boardId: string }) => {
     queryKey: ["board-member", `board-member:${boardId}`],
     queryFn: () => GetBoardMembersServerAction(boardId),
     enabled: !!boardId,
+    placeholderData: (prev) => prev
   });
+
+  if (isPending) return <BoardMembersSkeleton />
 
   return (
     <>
-      {isPending && <BoardMembersSkeleton />}
       {isError && (
         <NotificationBar message={error.message} messageType="error" />
       )}
@@ -35,10 +37,10 @@ const BoardMember = ({ boardId }: { boardId: string }) => {
           ))}
         </List>
       ) : (
-        <p>You can invite members and they'll show here!</p>
+        <Typography>You can invite members and they'll show here!</Typography>
       )}
     </>
   );
 };
 
-export default BoardMember;
+export default BoardMembersList;

@@ -21,6 +21,7 @@ const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [notification, setNotification] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState({
+    id: "",
     email: "",
     firstname: "",
   });
@@ -31,7 +32,8 @@ const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const loadUserData = SecureLocalStorage.getItem("user");
         if (loadUserData && typeof loadUserData === "object") {
-          setUser({
+          setUser({            
+            id: (loadUserData as any).id || "",
             email: (loadUserData as any).email || "",
             firstname: (loadUserData as any).firstname || "",
           });
@@ -49,11 +51,12 @@ const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
     loadPersistedUserData();
   }, []);
 
-  const LogIn = useCallback<LogInType>((email, firstname) => {
-    setUser({ email, firstname });
+  const LogIn = useCallback<LogInType>((id, email, firstname) => {
+    setUser({ id, email, firstname });
 
     try {
       SecureLocalStorage.setItem("user", {
+        id,
         email,
         firstname,
       });
@@ -67,6 +70,7 @@ const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const LogOut = useCallback(() => {
     setUser({
+      id: "",
       email: "",
       firstname: "",
     });
@@ -80,9 +84,9 @@ const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
       setNotification("Error removing user data from browser storage");
     } finally {
       setIsLoading(false);
-      router.push("/welcome");
+      router.replace("/welcome");
     }
-  }, []);
+  }, [router]);
 
   const value: UserContextType = useMemo(() => {
     return {

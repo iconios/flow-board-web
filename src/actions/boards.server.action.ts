@@ -53,21 +53,10 @@ const GetBoardsServerAction = async (): Promise<GetBoardsOutputType> => {
       throw new Error("No boards found");
     }
 
-    const boardsArrayToReturn = result.boards.map((board) => ({
-      boardId: board._id,
-      bgColor: board.bg_color,
-      user: {
-        email: board.user_id.email,
-        firstname: board.user_id.firstname,
-      },
-      title: board.title,
-      createdAt: board.created_at,
-      updatedAt: board.updated_at,
-    }));
-
-    console.log("Boards details for client", boardsArrayToReturn);
+    console.log("Boards details for client", result.boards);
     return {
-      data: boardsArrayToReturn,
+      message: `${result.message}`,
+      data: result.boards,
     };
   } catch (error) {
     console.error("Error fetching board data", error);

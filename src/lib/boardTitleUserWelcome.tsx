@@ -9,10 +9,11 @@ const BoardTitleUserWelcome = ({
   bgColor: string;
 }) => {
   const { user } = useUserContext();
+  const decodedBg = decodeURIComponent(bgColor);
   return (
     <Paper
       sx={{
-        bgcolor: { bgColor },
+        bgcolor: { decodedBg },
         py: 1,
         px: 2,
         mb: 0.5,

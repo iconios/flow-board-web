@@ -38,6 +38,7 @@ const GetBoardMembersServerResponseSchema = z.object({
         userId: z.string(),
       }),
       role: z.string(),
+      boardOwnerUserId: z.string(),
     }),
   ),
 });
@@ -55,6 +56,7 @@ const GetBoardMembersSchema = z.object({
     userId: z.string(),
   }),
   role: z.string(),
+  boardOwnerUserId: z.string(),
 });
 export type GetBoardMembersType = z.infer<typeof GetBoardMembersSchema>;
 
@@ -68,7 +70,38 @@ export const MemberSchema = z.object({
       userId: z.string(),
     }),
     role: z.string(),
+    boardOwnerUserId: z.string(),
   }),
 });
 
 export type MemberType = z.infer<typeof MemberSchema>;
+
+const RemoveBoardMemberServerResponseSchema = z.object({
+  success: z.boolean(),
+  message: z.string(),
+});
+
+export type RemoveBoardMemberServerResponseType = z.infer<
+  typeof RemoveBoardMemberServerResponseSchema
+>;
+
+export const RemoveBoardMemberInputSchema = z.object({
+  memberId: z.string(),
+  boardId: z.string(),
+});
+
+export type RemoveBoardMemberInputType = z.infer<
+  typeof RemoveBoardMemberInputSchema
+>;
+
+const RemoveMemberDialogInputSchema = z.object({
+  memberName: z.string(),
+  dialogOpen: z.boolean(),
+  onClose: z.function(),
+  memberId: z.string(),
+  boardId: z.string(),
+});
+
+export type RemoveMemberDialogInputType = z.infer<
+  typeof RemoveMemberDialogInputSchema
+>;

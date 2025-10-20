@@ -5,6 +5,9 @@ import {
   CreateBoardMemberInputType,
   CreateBoardMemberServerResponseType,
   GetBoardMembersServerResponseType,
+  RemoveBoardMemberInputSchema,
+  RemoveBoardMemberInputType,
+  RemoveBoardMemberServerResponseType,
 } from "@/lib/member.types";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
@@ -97,4 +100,48 @@ const GetBoardMembersServerAction = async (boardId: string) => {
   }
 };
 
-export { CreateBoardMemberServerAction, GetBoardMembersServerAction };
+// Remove Board Member Server Action
+const RemoveBoardMemberServerAction = async (
+  removeBoardMemberInput: RemoveBoardMemberInputType,
+) => {
+  const token = (await cookies()).get("token")?.value ?? "";
+  validateServerUrlAndToken(token);
+
+  try {
+    const { boardId, memberId } = RemoveBoardMemberInputSchema.parse(
+      removeBoardMemberInput,
+    );
+    const response = await fetch(`${SERVER_BASE_URL}/member/${memberId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result: RemoveBoardMemberServerResponseType = await response.json();
+    if (!result.success) {
+      throw new Error(`${result.message}`);
+    }
+
+    revalidateTag("board-member");
+    revalidateTag(`board-member:${boardId}`);
+    return result.message;
+  } catch (error) {
+    console.error("Error removing board member", error);
+
+    if (error instanceof ZodError) {
+      throw new Error("Error validating the remove board member input");
+    }
+
+    if (error instanceof Error) throw error;
+
+    throw new Error("Error removing board member");
+  }
+};
+
+export {
+  CreateBoardMemberServerAction,
+  GetBoardMembersServerAction,
+  RemoveBoardMemberServerAction,
+};

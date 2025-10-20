@@ -12,8 +12,8 @@ import { GetBoardsServerAction } from "@/actions/boards.server.action";
 import CreateBoardButton from "@/components/board/createBoardButton";
 import BoardCard from "@/components/board/showBoardCard";
 import { useUserContext } from "@/lib/user.context";
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { Box, Container, Typography } from "@mui/material";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import NotificationBar from "@/lib/notificationBar";
 import { useQuery } from "@tanstack/react-query";
@@ -23,20 +23,22 @@ const BoardsPage = () => {
   // 1. Initialize the needed variables and constants
   const router = useRouter();
   const { isLoading, user } = useUserContext();
+  const redirected = useRef(false);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (redirected.current) return;
 
-    if (!user.email) {
-      router.push("/welcome");
+    if (!user.id) {
+      redirected.current = true;
+      router.replace("/welcome");
     }
-  }, [user.email, router, isLoading]);
+  }, [user.id, router]);
 
   // Get the boards from server
   const { isPending, isError, error, data } = useQuery({
     queryKey: ["board", user.email],
     queryFn: () => GetBoardsServerAction(),
-    enabled: !!user.email && !isLoading,
+    enabled: !!user.id,
     staleTime: 30_000,
     retry: 1,
   });
@@ -47,8 +49,12 @@ const BoardsPage = () => {
     return <NotificationBar message={error.message} messageType="error" />;
 
   // 3. Show the boards info
-  if (isPending) {
+  if (isPending || isLoading) {
     return <BoardPageSkeleton />;
+  }
+
+  if (!user.id) {
+    return null;
   }
 
   const boards = data?.data;
@@ -81,12 +87,11 @@ const BoardsPage = () => {
           >
             {boards.map((board) => (
               <BoardCard
-                bg_color={board.bgColor}
+                bg_color={board.bg_color}
                 title={board.title}
                 userName={board.user.firstname}
-                key={board.boardId}
-                boardId={board.boardId!}
-              />
+                key={board._id}
+                boardId={board._id} boardUserId={board.user._id} />
             ))}
           </Box>
         </Box>

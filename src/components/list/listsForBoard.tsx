@@ -27,10 +27,12 @@ const ListsForBoard = ({
   boardId,
   title,
   bgColor,
+  userId
 }: {
   boardId: string;
   title: string;
   bgColor: string;
+  userId: string;
 }) => {
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
@@ -41,6 +43,7 @@ const ListsForBoard = ({
   const router = useRouter();
   console.log("Board Bg color", bgColor);
   const [showInvite, setShowInvite] = useState(false);
+  console.log("ListsForBoard userid", userId)
 
   // Check if user is authenticated
   useEffect(() => {
@@ -169,7 +172,7 @@ const ListsForBoard = ({
       </Box>
 
       <Box display={showInvite ? "block" : "none"}>
-        <InviteToBoard boardId={boardId} />
+        <InviteToBoard boardId={boardId} userId={userId} />
       </Box>
     </Box>
   );

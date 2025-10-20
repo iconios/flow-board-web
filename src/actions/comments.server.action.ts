@@ -135,7 +135,10 @@ const UpdateCommentServerAction = async (
     revalidateTag("comments");
     revalidateTag(`comments:${taskId}`);
 
-    return result.comment;
+    return {
+      message: result.message,
+      comment: result.comment,
+    };
   } catch (error) {
     console.error("Error updating comment", error);
 

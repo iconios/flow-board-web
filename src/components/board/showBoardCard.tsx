@@ -21,7 +21,7 @@ import EditBoardDialogBox from "./editBoardDialogBox";
 import DeleteBoardDialogBox from "./deleteBoardDialogBox";
 import { useUserContext } from "@/lib/user.context";
 
-const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
+const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCardType) => {
   // 1. Initialize the variables or constants
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const theme = useTheme();
@@ -58,6 +58,7 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
     handleMenuClose();
   };
 
+  const encodedBg = encodeURIComponent(bg_color);
   return (
     // Container for each Board card
     <Container maxWidth="xs">
@@ -82,7 +83,7 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
       >
         {/* Color Header */}
         <Link
-          href={`/my-lists/${boardId}?t=${title}&bg=${bg_color}&uf=${user.firstname}&um=${user.email}`}
+          href={`/my-lists/${boardId}?t=${title}&bg=${encodedBg}&uid=${boardUserId}`}
           key={boardId}
           style={{ textDecoration: "none" }}
         >
@@ -118,7 +119,7 @@ const BoardCard = ({ bg_color, userName, title, boardId }: BoardCardType) => {
           >
             {/* Text Content */}
             <Link
-              href={`/my-lists/${boardId}?t=${title}&bg=${bg_color}&uf=${user.firstname}&um=${user.email}`}
+              href={`/my-lists/${boardId}?t=${title}&bg=${encodedBg}&uid=${boardUserId}`}
               key={boardId}
               style={{ textDecoration: "none" }}
             >

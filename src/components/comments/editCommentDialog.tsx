@@ -49,19 +49,22 @@ const EditCommentDialog = ({
   const {
     mutateAsync,
     isPending,
-    error: serverError,
   } = useMutation({
     mutationFn: (values: UpdateCommentInputType) =>
       UpdateCommentServerAction(values),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({
         queryKey: ["comments", `comments:${taskId}`],
       });
+      setNotification({
+        message: `${result.message}`,
+        messageType: "success"
+      })
       handleDialogClose();
     },
-    onError: () => {
+    onError: (error) => {
       setNotification({
-        message: `${serverError?.message}` || "Failed to edit comment",
+        message: `${error.message}` || "Failed to edit comment",
         messageType: "error",
       });
     },
@@ -131,6 +134,9 @@ const EditCommentDialog = ({
               onBlur={formik.handleBlur}
               error={formik.touched.content && Boolean(formik.errors.content)}
               helperText={formik.touched.content && formik.errors.content}
+              sx={{
+                width: "100%"
+              }}
             />
 
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
