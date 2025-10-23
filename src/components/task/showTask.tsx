@@ -50,7 +50,7 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
     isPending,
     data: tasks,
   } = useQuery({
-    queryKey: ["tasks", `tasks:${listId}`],
+    queryKey: ["task", `task:${listId}`],
     queryFn: () => GetTasksServerAction(listId),
     enabled: !!taskId && !!listId,
   });
@@ -88,7 +88,7 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
     mutationKey: ["task"],
     mutationFn: (values: UpdateTaskInputType) => UpdateTaskServerAction(values),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", `tasks:${listId}`] });
+      queryClient.invalidateQueries({ queryKey: ["task", `task:${listId}`] });
       setNotification({
         message: "Task updated successfully",
         messageType: "success",

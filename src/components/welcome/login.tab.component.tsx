@@ -68,14 +68,14 @@ const LoginTabPanel = () => {
 
   const handleFormSubmit = async (
     values: FormValuesType,
-    { setSubmitting, resetForm }: FormikHelpers<FormValuesType>,
+    { setSubmitting }: FormikHelpers<FormValuesType>,
   ) => {
     console.log(values);
     setNotification(null);
     try {
       await mutation.mutateAsync(values);
     } catch (error: any) {
-      console.error("Server error message", error);      
+      console.error("Server error message", error);
     } finally {
       setSubmitting(false);
     }

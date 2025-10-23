@@ -32,7 +32,7 @@ const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const loadUserData = SecureLocalStorage.getItem("user");
         if (loadUserData && typeof loadUserData === "object") {
-          setUser({            
+          setUser({
             id: (loadUserData as any).id || "",
             email: (loadUserData as any).email || "",
             firstname: (loadUserData as any).firstname || "",

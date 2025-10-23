@@ -78,7 +78,7 @@ const LoginServerAction = async ({
         email,
         password,
       }),
-      cache: "no-store"
+      cache: "no-store",
     });
 
     const result: LoginServerResponseType = await response.json();

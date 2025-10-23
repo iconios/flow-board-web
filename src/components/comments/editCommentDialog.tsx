@@ -46,10 +46,7 @@ const EditCommentDialog = ({
     };
   }, [content]);
 
-  const {
-    mutateAsync,
-    isPending,
-  } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (values: UpdateCommentInputType) =>
       UpdateCommentServerAction(values),
     onSuccess: (result) => {
@@ -58,8 +55,8 @@ const EditCommentDialog = ({
       });
       setNotification({
         message: `${result.message}`,
-        messageType: "success"
-      })
+        messageType: "success",
+      });
       handleDialogClose();
     },
     onError: (error) => {
@@ -135,7 +132,7 @@ const EditCommentDialog = ({
               error={formik.touched.content && Boolean(formik.errors.content)}
               helperText={formik.touched.content && formik.errors.content}
               sx={{
-                width: "100%"
+                width: "100%",
               }}
             />
 

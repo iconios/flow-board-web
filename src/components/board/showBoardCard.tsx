@@ -21,14 +21,19 @@ import EditBoardDialogBox from "./editBoardDialogBox";
 import DeleteBoardDialogBox from "./deleteBoardDialogBox";
 import { useUserContext } from "@/lib/user.context";
 
-const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCardType) => {
+const BoardCard = ({
+  bg_color,
+  userName,
+  title,
+  boardId,
+  boardUserId,
+}: BoardCardType) => {
   // 1. Initialize the variables or constants
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { user } = useUserContext();
 
   // Handler for the Vertical More button click
   const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -64,14 +69,12 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
     <Container maxWidth="xs">
       <Card
         sx={{
-          height: 150,
           transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
           "&:hover": {
             transform: "translateY(-4px)",
             boxShadow: theme.shadows[4],
           },
-          minHeight: isMobile ? 140 : 160,
-          border: "2px solid red",
+          minHeight: { xs: 140, sm: 160 },
           flexShrink: 0,
           flexBasis: {
             xs: "100%",
@@ -89,7 +92,7 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
         >
           <CardMedia
             sx={{
-              height: isMobile ? 50 : 80,
+              height: { xs: 50, sm: 80 },
               backgroundColor: bg_color,
               flexShrink: 0,
             }}
@@ -102,9 +105,9 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
             flexGrow: 1,
             display: "flex",
             flexDirection: "column",
-            p: isMobile ? 1.5 : 2,
+            p: { xs: 1.5, sm: 2 },
             "&:last-child": {
-              pb: isMobile ? 1.5 : 2,
+              pb: { xs: 1.5, sm: 2 },
             },
           }}
         >
@@ -137,7 +140,6 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
                     mb: 0.5,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
                     lineHeight: 1.2,
                   }}
                 >
@@ -162,15 +164,15 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
             <Box sx={{ flexShrink: 0, ml: 1 }}>
               <IconButton
                 onClick={handleMoreClick}
-                size={isMobile ? "small" : "medium"}
+                size="medium"
                 sx={{
-                  padding: isMobile ? "4px" : "8px",
+                  padding: { xs: "4px", sm: "8px" },
                   "&:hover": {
                     backgroundColor: theme.palette.action.hover,
                   },
                 }}
               >
-                <MoreVert fontSize={isMobile ? "small" : "medium"} />
+                <MoreVert fontSize="medium" />
               </IconButton>
             </Box>
           </Box>
@@ -193,7 +195,7 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
             paper: {
               sx: {
                 mt: 1,
-                minWidth: isMobile ? 120 : 140,
+                minWidth: { xs: 120, sm: 140 },
               },
             },
           }}
@@ -201,13 +203,13 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
           <MenuItem
             onClick={handleEditClick}
             sx={{
-              py: isMobile ? 1 : 1.5,
-              fontSize: isMobile ? "0.875rem" : "1rem",
+              py: { xs: 1, sm: 1.5 },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
             }}
           >
             <Edit
               sx={{
-                fontSize: isMobile ? "1rem" : "1.25rem",
+                fontSize: { xs: "1rem", sm: "1.25rem" },
                 mr: 1.5,
                 color: "text.secondary",
               }}
@@ -217,14 +219,14 @@ const BoardCard = ({ bg_color, userName, title, boardId, boardUserId }: BoardCar
           <MenuItem
             onClick={handleDeleteClick}
             sx={{
-              py: isMobile ? 1 : 1.5,
-              fontSize: isMobile ? "0.875rem" : "1rem",
+              py: { xs: 1, sm: 1.5 },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
               color: "error.main",
             }}
           >
             <Delete
               sx={{
-                fontSize: isMobile ? "1rem" : "1.25rem",
+                fontSize: { xs: "1rem", sm: "1.25rem" },
                 mr: 1.5,
                 color: "error.main",
               }}

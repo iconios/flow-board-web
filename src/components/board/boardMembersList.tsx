@@ -20,10 +20,10 @@ const BoardMembersList = ({ boardId }: { boardId: string }) => {
     queryKey: ["board-member", `board-member:${boardId}`],
     queryFn: () => GetBoardMembersServerAction(boardId),
     enabled: !!boardId,
-    placeholderData: (prev) => prev
+    placeholderData: (prev) => prev,
   });
 
-  if (isPending) return <BoardMembersSkeleton />
+  if (isPending) return <BoardMembersSkeleton />;
 
   return (
     <>

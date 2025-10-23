@@ -23,7 +23,7 @@ import { useUserContext } from "@/lib/user.context";
 
 const MemberUI = ({ member }: MemberType) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const {user} = useUserContext();
+  const { user } = useUserContext();
 
   const firstAlphabet = member.user.firstname[0];
   const initialValues = {
@@ -44,7 +44,7 @@ const MemberUI = ({ member }: MemberType) => {
     validationSchema: toFormikValidationSchema(BoardMemberRoleSchema),
     onSubmit: handleRole,
   });
-  
+
   if (!member) return <p>Nothing to render!</p>;
 
   return (
@@ -81,9 +81,10 @@ const MemberUI = ({ member }: MemberType) => {
                 variant="text"
                 startIcon={<Remove />}
                 onClick={() => setOpenDialog(true)}
-                sx={{ 
+                sx={{
                   ml: 2,
-                  display: user.id !== member.boardOwnerUserId ? "none" : "block",
+                  display:
+                    user.id !== member.boardOwnerUserId ? "none" : "block",
                 }}
               >
                 Remove

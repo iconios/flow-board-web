@@ -120,3 +120,14 @@ const DeleteTaskFormInputSchema = DeleteTaskInputSchema.extend({
 });
 
 export type DeleteTaskFormInputType = z.infer<typeof DeleteTaskFormInputSchema>;
+
+export const TaskSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  dueDate: z.string(),
+  priority: z.string(),
+  position: z.number(),
+});
+
+export type TaskType = z.infer<typeof TaskSchema>;

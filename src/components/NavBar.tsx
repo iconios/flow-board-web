@@ -64,6 +64,8 @@ const NavBar = () => {
             {/* Nerdy Logo (text-based) */}
             <Box
               aria-label="Nerdy logo"
+              component={Link}
+              href="/"
               sx={{
                 px: { xs: 1, sm: 1.25 },
                 py: 0.5,
@@ -73,9 +75,10 @@ const NavBar = () => {
                 fontWeight: 800,
                 letterSpacing: 1,
                 fontSize: { xs: "0.8rem", sm: "0.9rem" },
+                textDecoration: "none",
               }}
             >
-              Nerdy
+              NERDY
             </Box>
 
             {/* Title: Nerdy Flow Board */}
@@ -95,27 +98,49 @@ const NavBar = () => {
           {/* Flexible Spacer */}
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* Right Cluster: Login action */}
+          {/* Right Cluster: Boards and Login buttons */}
           {!isMobile ? (
             /* Desktop View */
             <Box>
-              <Link href={user.email ? "" : "/welcome"}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{
-                    textTransform: "none",
-                    fontWeight: 600,
-                    bgcolor: "primary.main",
-                    ":hover": { bgcolor: "primary.dark" },
-                    fontSize: { sm: "0.9rem", md: "1rem" },
-                    px: 3,
-                  }}
-                  onClick={user ? handleLogout : handleLogin}
+              <Stack direction="row" spacing={2}>
+                <Box
+                  display={user.id ? "block" : "none"}
+                  component={Link}
+                  href="/my-boards"
                 >
-                  {user.email ? "Logout" : "Login"}
-                </Button>
-              </Link>
+                  <Button
+                    size="small"
+                    sx={{
+                      color: "primary.contrastText",
+                      textTransform: "none",
+                      fontWeight: 600,
+                      bgcolor: "primary.main",
+                      ":hover": { bgcolor: "primary.dark" },
+                      fontSize: { sm: "0.9rem", md: "1rem" },
+                      px: 3,
+                    }}
+                  >
+                    Boards
+                  </Button>
+                </Box>
+                <Box component={Link} href="/welcome">
+                  <Button
+                    variant="contained"
+                    size="small"
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: 600,
+                      bgcolor: "primary.main",
+                      ":hover": { bgcolor: "primary.dark" },
+                      fontSize: { sm: "0.9rem", md: "1rem" },
+                      px: 3,
+                    }}
+                    onClick={user ? handleLogout : handleLogin}
+                  >
+                    {user.id ? "Logout" : "Login"}
+                  </Button>
+                </Box>
+              </Stack>
             </Box>
           ) : (
             /* Mobile View */
@@ -136,23 +161,50 @@ const NavBar = () => {
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      mt: 1,
+                      minWidth: 120,
+                    },
+                  },
+                }}
               >
                 <MenuItem
-                  onClick={user.email ? handleLogout : handleLogin}
-                  sx={{ p: 0 }}
+                  sx={{ p: 0, display: user.id ? "block" : "none", mb: 0.5 }}
+                  LinkComponent={Link}
+                  href="/my-boards"
                 >
-                  <Link href={user.email ? "" : "/welcome"}>
-                    <Button
-                      sx={{
-                        bgcolor: "primary.main",
-                        color: "primary.contrastText",
-                        ":hover": { bgcolor: "primary.dark" },
-                        m: 0,
-                      }}
-                    >
-                      {user.email ? "Logout" : "Login"}
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="text"
+                    sx={{
+                      bgcolor: "primary.main",
+                      color: "primary.contrastText",
+                      ":hover": { bgcolor: "primary.dark" },
+                      m: 0,
+                      width: "100%",
+                    }}
+                  >
+                    Boards
+                  </Button>
+                </MenuItem>
+                <MenuItem
+                  onClick={user.id ? handleLogout : handleLogin}
+                  sx={{ p: 0 }}
+                  LinkComponent={Link}
+                  href="/welcome"
+                >
+                  <Button
+                    sx={{
+                      bgcolor: "primary.main",
+                      color: "primary.contrastText",
+                      ":hover": { bgcolor: "primary.dark" },
+                      m: 0,
+                      width: "100%",
+                    }}
+                  >
+                    {user.id ? "Logout" : "Login"}
+                  </Button>
                 </MenuItem>
               </Menu>
             </Box>

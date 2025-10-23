@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import NavBar from "@/components/NavBar";
 import { Box, Paper, Typography } from "@mui/material";
 
@@ -43,6 +44,7 @@ const TabsLayout = ({ children }: { children: React.ReactNode }) => {
           </Typography>
           {children}
         </Box>
+        <Footer />
       </Paper>
     </Box>
   );

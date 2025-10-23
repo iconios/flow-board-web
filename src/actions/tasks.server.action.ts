@@ -52,8 +52,8 @@ const CreateTasksServerAction = async (createTaskInput: CreateTaskFormType) => {
       throw new Error(`${result.message}`);
     }
 
-    revalidateTag("tasks");
-    revalidateTag(`tasks:${listId}`);
+    revalidateTag("task");
+    revalidateTag(`task:${listId}`);
 
     return result.task;
   } catch (error) {
@@ -82,7 +82,7 @@ const GetTasksServerAction = async (listId: string) => {
         "Content-Type": "application/json",
       },
       next: {
-        tags: ["tasks", `tasks:${listId}`],
+        tags: ["task", `task:${listId}`],
       },
     });
 
@@ -128,8 +128,8 @@ const UpdateTaskServerAction = async (updateTaskInput: UpdateTaskInputType) => {
       throw new Error(`${result.message}`);
     }
 
-    revalidateTag("tasks");
-    revalidateTag(`tasks:${listId}`);
+    revalidateTag("task");
+    revalidateTag(`task:${listId}`);
     return result.task;
   } catch (error) {
     console.error("Error updating task", error);
@@ -166,8 +166,8 @@ const DeleteTaskServerAction = async (deleteTaskData: DeleteTaskInputType) => {
       throw new Error(`${result.message}`);
     }
 
-    revalidateTag("tasks");
-    revalidateTag(`tasks:${listId}`);
+    revalidateTag("task");
+    revalidateTag(`task:${listId}`);
     return result.message;
   } catch (error) {
     console.error("Error deleting task", error);

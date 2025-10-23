@@ -114,3 +114,27 @@ export const DeleteListDialogInputSchema = DeleteListInputSchema.extend({
 export type DeleteListDialogInputType = z.infer<
   typeof DeleteListDialogInputSchema
 >;
+
+export const DndListSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  position: z.number(),
+  status: z.string(),
+  boardId: z.string(),
+  tasks: z.array(
+    z.object({
+      _id: z.string(),
+      description: z.string(),
+      title: z.string(),
+      dueDate: z.string(),
+      priority: z.string(),
+      position: z.number(),
+      listId: z.string(),
+    }),
+  ),
+});
+
+export type DndListType = z.infer<typeof DndListSchema>;
+
+export const DndListsSchema = z.array(DndListSchema);
+export type DndListsType = z.infer<typeof DndListsSchema>;

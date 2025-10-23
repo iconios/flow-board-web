@@ -4,7 +4,9 @@ import { Delete } from "@mui/icons-material";
 import { Box, IconButton, Typography } from "@mui/material";
 import Link from "next/link";
 import DeleteTaskDialog from "./deleteTaskDialog";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const TaskInListUI = ({
   title,
@@ -19,13 +21,33 @@ const TaskInListUI = ({
 }) => {
   const [open, setOpen] = useState(false);
 
+  // useSortable hook for draggable task in list
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: taskId });
+
+  // CSS styles for the drag animation
+  const style: CSSProperties = {
+    transform:
+      CSS.Transform.toString(transform) + (isDragging ? " scale(1.02)" : ""),
+    transition,
+    opacity: isDragging ? "0.5" : 1,
+  };
+
   const handleCloseDialog = () => {
     setOpen(false);
   };
   return (
     <>
-      {/* Container for the delete icon */}
+      {/* Container for each Task in List */}
       <Box
+        ref={setNodeRef}
+        component="div"
         bgcolor="#ffffff"
         padding={2}
         margin={2}
@@ -34,6 +56,9 @@ const TaskInListUI = ({
           justifyContent: "space-between",
           flexDirection: "row",
         }}
+        style={style}
+        {...attributes}
+        {...listeners}
       >
         <Link
           href={`/my-task/${taskId}/list/${listId}`}

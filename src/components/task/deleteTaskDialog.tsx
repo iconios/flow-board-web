@@ -35,11 +35,12 @@ const DeleteTaskDialog = ({
     mutationFn: (values: { listId: string; taskId: string }) =>
       DeleteTaskServerAction(values),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`lists:${boardId}`] });
+      queryClient.invalidateQueries({ queryKey: ["list", `list:${boardId}`] });
       setNotification({
         message: "Task deleted successfully",
         messageType: "success",
       });
+      handleDialogClose();
     },
     onError: () => {
       setNotification({
@@ -52,7 +53,6 @@ const DeleteTaskDialog = ({
   const handleDelete = async () => {
     try {
       await mutation.mutateAsync({ taskId, listId });
-      setTimeout(() => handleDialogClose(), 2000);
     } catch (error) {
       console.error("Error deleting task", error);
     }

@@ -91,7 +91,9 @@ const BoardsPage = () => {
                 title={board.title}
                 userName={board.user.firstname}
                 key={board._id}
-                boardId={board._id} boardUserId={board.user._id} />
+                boardId={board._id}
+                boardUserId={board.user._id}
+              />
             ))}
           </Box>
         </Box>

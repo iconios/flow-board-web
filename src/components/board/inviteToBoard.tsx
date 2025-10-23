@@ -23,14 +23,20 @@ import NotificationBar from "@/lib/notificationBar";
 import BoardMembersList from "./boardMembersList";
 import { useUserContext } from "@/lib/user.context";
 
-const InviteToBoard = ({ boardId, userId }: { boardId: string, userId: string }) => {
-  const {user} = useUserContext();
+const InviteToBoard = ({
+  boardId,
+  userId,
+}: {
+  boardId: string;
+  userId: string;
+}) => {
+  const { user } = useUserContext();
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
   console.log("Board user id", userId);
-  console.log("Logged-in user id", user.id)
+  console.log("Logged-in user id", user.id);
   const mutation = useMutation({
     mutationKey: ["board-member-invite"],
     mutationFn: (values: CreateBoardMemberInputType) =>
@@ -121,9 +127,14 @@ const InviteToBoard = ({ boardId, userId }: { boardId: string, userId: string })
                 onBlur={formik.handleBlur}
                 error={formik.touched.email && Boolean(formik.errors.email)}
                 helperText={formik.touched.email && formik.errors.email}
-                disabled={ userId !== user.id }
+                disabled={userId !== user.id}
               />
-              <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={ userId !== user.id }>
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ mt: 2 }}
+                disabled={userId !== user.id}
+              >
                 Send Invite
               </Button>
             </Stack>

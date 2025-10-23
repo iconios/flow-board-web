@@ -8,7 +8,7 @@ import {
 import NotificationBar from "@/lib/notificationBar";
 import { NotificationBarType } from "@/lib/types";
 import {
-    Box,
+  Box,
   Button,
   Dialog,
   DialogActions,

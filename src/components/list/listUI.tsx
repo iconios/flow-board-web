@@ -5,13 +5,37 @@ import { Box, IconButton, Paper, Typography } from "@mui/material";
 import TaskInListUI from "../task/taskInListUI";
 import CreateTaskDialog from "../task/createTaskDialog";
 import { Delete, Edit } from "@mui/icons-material";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 import EditListDialog from "./editListDialog";
 import DeleteBListDialog from "./deleteListDialog";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const ListUI = ({ list }: ListType) => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  // useSortable hook for colum drag and drop
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: list.id, data: { type: "list" } });
+
+  // CSS styles for column drag animation
+  const base = CSS.Transform.toString(transform);
+  const style: CSSProperties = {
+    transform: isDragging ? `${base} rotate(5deg)` : base,
+    transition,
+    cursor: isDragging ? "grabbing" : "grab",
+  };
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
@@ -24,14 +48,25 @@ const ListUI = ({ list }: ListType) => {
   return (
     // Container for each list
     <Paper
+      ref={setNodeRef}
+      style={style}
       sx={{
         mb: 2,
         width: { xs: "100%", md: "calc(32% - 8px)" },
         borderRadius: 0,
+        opacity: isDragging ? 0.6 : 1,
+        bgcolor: isDragging ? "#eff6ff" : "background.paper",
+        border: isDragging ? "2px dashed #90cdf4" : "1px solid",
+        borderColor: isDragging ? "#90cdf4" : "divider",
+        transition: "all 0.2s ease",
+        cursor: isDragging ? "grabbing" : "grab",
+        "&:hover": {
+          boxShadow: isDragging ? "none" : 2,
+        },
       }}
     >
       {/* Container for List title, all its tasks, and "Add new task" button */}
-      <Box padding={2} bgcolor="#E5E4E2">
+      <Box padding={2} bgcolor="#E5E4E2" {...attributes} {...listeners}>
         <Box
           sx={{
             display: "flex",
@@ -73,15 +108,20 @@ const ListUI = ({ list }: ListType) => {
 
         {/* Container for all tasks */}
         <Box minHeight={100}>
-          {list.tasks.map((task) => (
-            <TaskInListUI
-              title={task.title}
-              taskId={task._id}
-              listId={task.listId}
-              boardId={list.boardId}
-              key={task._id}
-            />
-          ))}
+          <SortableContext
+            items={list.tasks.map((task) => task._id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {list.tasks.map((task) => (
+              <TaskInListUI
+                title={task.title}
+                taskId={task._id}
+                listId={task.listId}
+                boardId={list.boardId}
+                key={task._id}
+              />
+            ))}
+          </SortableContext>
         </Box>
       </Box>
 

@@ -21,7 +21,9 @@ const Page = async ({
   const { t, bg, uid } = await searchParams;
 
   console.log("My-lists Page boardUserId", uid);
-  return <ListsForBoard boardId={boardId} title={t} bgColor={bg} userId={uid} />;
+  return (
+    <ListsForBoard boardId={boardId} title={t} bgColor={bg} userId={uid} />
+  );
 };
 
 export default Page;

@@ -126,20 +126,19 @@ export type SignUpAuthServerResponseType = z.infer<
 const LoginServerResponseSchema = SignUpAuthServerResponseSchema.extend({
   error: z.string().optional(),
   token: z.string().optional(),
-  user: z
-    .object({
-      id: z.string(),
-      email: z.string(),
-      firstname: z.string(),
-    })
+  user: z.object({
+    id: z.string(),
+    email: z.string(),
+    firstname: z.string(),
+  }),
 });
 
 export type LoginServerResponseType = z.infer<typeof LoginServerResponseSchema>;
 
 const LoginAuthOutputSchema = z.object({
-    id: z.string(),
-    email: z.string(),
-    firstname: z.string(),
+  id: z.string(),
+  email: z.string(),
+  firstname: z.string(),
 });
 
 export type LoginAuthOutputType = z.infer<typeof LoginAuthOutputSchema>;
