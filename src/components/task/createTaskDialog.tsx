@@ -69,8 +69,8 @@ const CreateTaskDialog = ({
     mutationKey: [`tasks:${listId}`, "tasks"],
     mutationFn: (newTask: CreateTaskInputType) =>
       CreateTasksServerAction(newTask),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["list", `list:${boardId}`] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["list", `list:${boardId}`] });
       setNotification({
         message: "Task created successfully",
         messageType: "success",

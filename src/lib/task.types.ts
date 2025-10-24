@@ -44,6 +44,7 @@ const CreateTaskServerResponseScehma = z.object({
     dueDate: z.string(),
     priority: z.string(),
     position: z.number(),
+    listId: z.string(),
   }),
 });
 
@@ -128,6 +129,7 @@ export const TaskSchema = z.object({
   dueDate: z.string(),
   priority: z.string(),
   position: z.number(),
+  listId: z.string(),
 });
 
 export type TaskType = z.infer<typeof TaskSchema>;

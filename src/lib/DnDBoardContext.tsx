@@ -3,6 +3,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -23,6 +24,10 @@ export const DndBoardProvider = ({
 }) => {
   const [lists, setLists] = useState<DndListType[]>(initialLists);
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  useEffect(() => {
+  setLists(initialLists);
+}, [initialLists]);
 
   // Move task to a different list
   const moveTask = (taskId: string, toListId: string) => {
