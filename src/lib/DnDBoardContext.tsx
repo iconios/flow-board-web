@@ -26,8 +26,8 @@ export const DndBoardProvider = ({
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
-  setLists(initialLists);
-}, [initialLists]);
+    setLists(initialLists);
+  }, [initialLists]);
 
   // Move task to a different list
   const moveTask = (taskId: string, toListId: string) => {

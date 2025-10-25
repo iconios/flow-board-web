@@ -1,7 +1,13 @@
 // Container for each list
 
 import { ListType } from "@/lib/types";
-import { Box, IconButton, Paper, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Paper,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import TaskInListUI from "../task/taskInListUI";
 import CreateTaskDialog from "../task/createTaskDialog";
 import { Delete, Edit } from "@mui/icons-material";
@@ -113,17 +119,22 @@ const ListUI = ({ list }: ListType) => {
         <Box minHeight={100}>
           <SortableContext
             items={list.tasks.map((task) => task._id)}
-            strategy={isMdUp ? horizontalListSortingStrategy : verticalListSortingStrategy}
+            strategy={
+              isMdUp
+                ? horizontalListSortingStrategy
+                : verticalListSortingStrategy
+            }
           >
-            {list.tasks.map((task) => (
-              <TaskInListUI
-                title={task.title}
-                taskId={task._id}
-                listId={task.listId}
-                boardId={list.boardId}
-                key={task._id}
-              />
-            ))}
+            {list.tasks
+              .map((task) => (
+                <TaskInListUI
+                  title={task.title}
+                  taskId={task._id}
+                  listId={task.listId}
+                  boardId={list.boardId}
+                  key={task._id}
+                />
+              ))}
           </SortableContext>
         </Box>
       </Box>

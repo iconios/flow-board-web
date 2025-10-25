@@ -36,8 +36,10 @@ import {
 import InviteToBoard from "../board/inviteToBoard";
 import CreateListDialog from "./createListDialog";
 import ListUI from "./listUI";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NotificationBarType } from "@/lib/types";
+import { useSocket } from "@/lib/socketProvider";
+import { useUserContext } from "@/lib/user.context";
 
 const DndBoardLists = ({
   boardId,
@@ -51,6 +53,8 @@ const DndBoardLists = ({
   userId: string;
 }) => {
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+  const socket = useSocket();
+  const { user } = useUserContext();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -83,6 +87,54 @@ const DndBoardLists = ({
       },
     }),
   );
+
+  useEffect(() => {
+    if (!socket) {
+      console.error("Socket not available for board", boardId);
+      return;
+    }
+
+    const handleJoinSuccess = (response: {
+      message: string;
+      roomId: string;
+    }) => {
+      setNotification({
+        message: `${response?.message} for room-id ${response?.roomId}`,
+        messageType: "success",
+      });
+    };
+
+    const handleJoinError = (response: { message: string }) => {
+      setNotification({
+        message: `${response.message}`,
+        messageType: "error",
+      });
+    };
+
+    socket.on("room:join:success", handleJoinSuccess);
+    socket.on("room:join:error", handleJoinError);
+
+    if (dndLists.length > 0) {
+      for (let list of dndLists) {
+        const roomId = `listId-${list.id}`;
+        socket.emit("room:join", roomId);
+      }
+    }
+
+    // Cleanup listeners and leave rooms
+    return () => {
+      socket.off("room:join:success", handleJoinSuccess);
+      socket.off("room:join:error", handleJoinError);
+
+      // Leave all list rooms
+      if (dndLists.length > 0) {
+        for (let list of dndLists) {
+          const roomId = `listId-${list.id}`;
+          socket.emit("room:leave", roomId);
+        }
+      }
+    };
+  }, [socket, dndLists, boardId]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -313,9 +365,10 @@ const DndBoardLists = ({
                 : verticalListSortingStrategy
             }
           >
-            {dndLists.map((list) => (
-              <ListUI list={list} key={list.id} />
-            ))}
+            {dndLists
+              .map((list) => (
+                <ListUI list={list} key={list.id} />
+              ))}
           </SortableContext>
         </Box>
 

@@ -30,7 +30,9 @@ const validateServerUrlAndToken = (token: string) => {
 };
 
 // Create a Task for a List
-const CreateTasksServerAction = async (createTaskInput: CreateTaskInputType) => {
+const CreateTasksServerAction = async (
+  createTaskInput: CreateTaskInputType,
+) => {
   const token = (await cookies()).get("token")?.value ?? "";
   validateServerUrlAndToken(token);
 

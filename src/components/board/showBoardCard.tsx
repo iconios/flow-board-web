@@ -19,7 +19,6 @@ import {
 import { useState } from "react";
 import EditBoardDialogBox from "./editBoardDialogBox";
 import DeleteBoardDialogBox from "./deleteBoardDialogBox";
-import { useUserContext } from "@/lib/user.context";
 
 const BoardCard = ({
   bg_color,
