@@ -39,7 +39,7 @@ import ListUI from "./listUI";
 import { useEffect, useState } from "react";
 import { NotificationBarType } from "@/lib/types";
 import { useSocket } from "@/lib/socketProvider";
-import { useUserContext } from "@/lib/user.context";
+import useDragPersistence from "@/hooks/useDragPersistence";
 
 const DndBoardLists = ({
   boardId,
@@ -54,10 +54,10 @@ const DndBoardLists = ({
 }) => {
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
   const socket = useSocket();
-  const { user } = useUserContext();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
+  const { persistListReorder, persistTaskReorder, persistTaskMove } = useDragPersistence();
   const [openCreateListDialog, setOpenCreateListDialog] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const {
@@ -94,25 +94,31 @@ const DndBoardLists = ({
       return;
     }
 
-    const handleJoinSuccess = (response: {
+    const handleSuccess = (response: {
       message: string;
       roomId: string;
     }) => {
       setNotification({
-        message: `${response?.message} for room-id ${response?.roomId}`,
+        message: `${response.message} for room-id ${response?.roomId}`,
         messageType: "success",
       });
     };
 
-    const handleJoinError = (response: { message: string }) => {
+    const handleError = (response: { message: string }) => {
       setNotification({
         message: `${response.message}`,
         messageType: "error",
       });
     };
 
-    socket.on("room:join:success", handleJoinSuccess);
-    socket.on("room:join:error", handleJoinError);
+    socket.on("room:join:success", handleSuccess);
+    socket.on("room:join:error", handleError);
+    socket.on("task:move:success", handleSuccess);
+    socket.on("task:move:error", handleError);
+    socket.on("task:reorder:success", handleSuccess);
+    socket.on("task:reorder:error", handleError);
+    socket.on("list:reorder:success", handleSuccess);
+    socket.on("list:reorder:error", handleError);
 
     if (dndLists.length > 0) {
       for (let list of dndLists) {
@@ -123,8 +129,8 @@ const DndBoardLists = ({
 
     // Cleanup listeners and leave rooms
     return () => {
-      socket.off("room:join:success", handleJoinSuccess);
-      socket.off("room:join:error", handleJoinError);
+      socket.off("room:join:success", handleSuccess);
+      socket.off("room:join:error", handleError);
 
       // Leave all list rooms
       if (dndLists.length > 0) {
@@ -167,7 +173,7 @@ const DndBoardLists = ({
     const isOverList = dndLists.some((lis) => lis.id === overId);
     if (isOverList && activeListId !== overId) {
       console.log(
-        "Moving task to different list (via list header):",
+        "Moving task to different list:",
         activeId,
         "from",
         activeListId,
@@ -175,6 +181,7 @@ const DndBoardLists = ({
         overId,
       );
       moveTask(activeId, overId);
+      persistTaskMove(activeId, overId);
       return;
     }
 
@@ -198,6 +205,7 @@ const DndBoardLists = ({
           overListId,
         );
         moveTask(activeId, overListId);
+        persistTaskMove(activeId, overListId);
         return;
       }
 
@@ -217,6 +225,7 @@ const DndBoardLists = ({
       if (activePosition !== overPosition) {
         console.log("Reordering task within same list");
         reorderTask(activeListId, activeId, overPosition);
+        persistTaskReorder(activeId, activeListId, overPosition)
       }
     }
 
@@ -235,6 +244,7 @@ const DndBoardLists = ({
 
     if (isListDrag && active.id !== over.id) {
       reorderList(active.id as string, over.id as string);
+      persistListReorder(active.id as string, over?.data?.current?.position as number)
     }
   };
 
@@ -365,10 +375,9 @@ const DndBoardLists = ({
                 : verticalListSortingStrategy
             }
           >
-            {dndLists
-              .map((list) => (
-                <ListUI list={list} key={list.id} />
-              ))}
+            {dndLists.map((list) => (
+              <ListUI list={list} key={list.id} />
+            ))}
           </SortableContext>
         </Box>
 

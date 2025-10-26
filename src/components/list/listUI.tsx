@@ -36,7 +36,7 @@ const ListUI = ({ list }: ListType) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: list.id, data: { type: "list" } });
+  } = useSortable({ id: list.id, data: { type: "list", position: list.position } });
 
   // CSS styles for column drag animation
   const base = CSS.Transform.toString(transform);
@@ -125,16 +125,15 @@ const ListUI = ({ list }: ListType) => {
                 : verticalListSortingStrategy
             }
           >
-            {list.tasks
-              .map((task) => (
-                <TaskInListUI
-                  title={task.title}
-                  taskId={task._id}
-                  listId={task.listId}
-                  boardId={list.boardId}
-                  key={task._id}
-                />
-              ))}
+            {list.tasks.map((task) => (
+              <TaskInListUI
+                title={task.title}
+                taskId={task._id}
+                listId={task.listId}
+                boardId={list.boardId}
+                key={task._id}
+              />
+            ))}
           </SortableContext>
         </Box>
       </Box>

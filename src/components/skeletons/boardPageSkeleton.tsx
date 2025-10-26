@@ -21,6 +21,7 @@ const BoardPageSkeleton = () => {
             md: "calc(33.333% - 4px)",
             lg: "calc(23% - 2px)",
           },
+          mb: 2
         }}
       >
         {/* Color Header */}
