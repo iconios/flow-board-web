@@ -26,46 +26,49 @@ const useDragPersistence = () => {
     [socket],
   );
 
-  const persistTaskMove = useCallback((taskId: string, listId: string) => {
-    if (!socket?.connected) {
+  const persistTaskMove = useCallback(
+    (taskId: string, listId: string) => {
+      if (!socket?.connected) {
         console.warn("Socket not available for task move persistence");
         return;
-    };
+      }
 
-    try {
+      try {
         console.log("Data object for task move", {
-            taskId,
-            listId
-        })
+          taskId,
+          listId,
+        });
         socket.emit("task:move", {
-            data: {
-                taskId,
-                listId
-            }
-        })
-    } catch (error) {
+          data: {
+            taskId,
+            listId,
+          },
+        });
+      } catch (error) {
         console.error("Failed to move task", error);
-    }
-  }, [socket])
+      }
+    },
+    [socket],
+  );
 
   const persistListReorder = useCallback(
     (listId: string, newPosition: number) => {
       if (!socket?.connected) {
         console.warn("Socket not available for task move persistence");
         return;
-      };
+      }
 
       try {
         console.log("Data for list reorder", {
-            listId,
-            newPosition
+          listId,
+          newPosition,
         });
         socket.emit("list:reorder", {
-              data: {
-                  listId,
-                  position: newPosition,
-              },
-          });
+          data: {
+            listId,
+            position: newPosition,
+          },
+        });
       } catch (error) {
         console.error("Failed to reorder list", error);
       }
@@ -76,7 +79,7 @@ const useDragPersistence = () => {
   return {
     persistTaskReorder,
     persistListReorder,
-    persistTaskMove
+    persistTaskMove,
   };
 };
 

@@ -1,125 +1,52 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  CardMedia,
-  Container,
-  Skeleton,
-} from "@mui/material";
+import { Box, Card, CardContent, CardMedia, Skeleton } from "@mui/material";
+import Grid from "@mui/system/Grid";
 
 const BoardPageSkeleton = () => {
+  const items = [1, 2, 3];
   return (
-    <Container maxWidth="xs">
-      <Card
-        sx={{
-          height: 150,
-          minHeight: { xs: 140, sm: 180 },
-          flexShrink: 0,
-          flexBasis: {
-            xs: "100%",
-            sm: "calc(50% - 8px)",
-            md: "calc(33.333% - 4px)",
-            lg: "calc(23% - 2px)",
-          },
-          mb: 2
-        }}
-      >
-        {/* Color Header */}
-        <CardMedia
-          sx={{
-            flexShrink: 0,
-          }}
-        >
-          <Skeleton variant="rectangular" sx={{ height: { xs: 50, sm: 80 } }} />
-        </CardMedia>
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }}>
+        {items.map((item) => (
+          <Grid size={{ xs: 4, sm: 4, md: 4 }} key={item}>
+            <Card
+              sx={{
+                height: 150,
+                minHeight: { xs: 140, sm: 180 },
+                mb: 2,
+                minWidth: { xs: 100, sm: 200 },
+              }}
+            >
+              {/* Color Header */}
+              <CardMedia>
+                <Skeleton
+                  variant="rectangular"
+                  sx={{
+                    height: { xs: 50, sm: 80 },
+                    minWidth: { xs: 100, sm: 200 },
+                  }}
+                />
+              </CardMedia>
 
-        {/* Content Area */}
-        <CardContent
-          sx={{
-            flexGrow: 1,
-            display: "flex",
-            flexDirection: "column",
-            p: { xs: 1.5, sm: 2 },
-          }}
-        >
-          {/* Text Content */}
-          <Box
-            sx={{
-              minWidth: 0, // Enables text truncation
-            }}
-          >
-            <Skeleton
-              variant="text"
-              sx={{
-                width: "100%",
-                fontSize: 24,
-              }}
-            />
-            <Skeleton
-              variant="text"
-              sx={{
-                width: "60%",
-                fontSize: 16,
-              }}
-            />
-          </Box>
-        </CardContent>
-      </Card>
-      <Card
-        sx={{
-          height: 150,
-          minHeight: { xs: 140, sm: 180 },
-          flexShrink: 0,
-          flexBasis: {
-            xs: "100%",
-            sm: "calc(50% - 8px)",
-            md: "calc(33.333% - 4px)",
-            lg: "calc(23% - 2px)",
-          },
-        }}
-      >
-        {/* Color Header */}
-        <CardMedia
-          sx={{
-            flexShrink: 0,
-          }}
-        >
-          <Skeleton variant="rectangular" sx={{ height: { xs: 50, sm: 80 } }} />
-        </CardMedia>
-
-        {/* Content Area */}
-        <CardContent
-          sx={{
-            flexGrow: 1,
-            display: "flex",
-            flexDirection: "column",
-            p: { xs: 1.5, sm: 2 },
-          }}
-        >
-          {/* Text Content */}
-          <Box
-            sx={{
-              minWidth: 0, // Enables text truncation
-            }}
-          >
-            <Skeleton
-              variant="text"
-              sx={{
-                width: "100%",
-                fontSize: 24,
-              }}
-            />
-            <Skeleton
-              variant="text"
-              sx={{
-                width: "60%",
-                fontSize: 16,
-              }}
-            />
-          </Box>
-        </CardContent>
-      </Card>
-    </Container>
+              {/* Content Area */}
+              <CardContent
+                sx={{ p: { xs: 1.5, sm: 2 }, minWidth: { xs: 100, sm: 200 } }}
+              >
+                <Box>
+                  <Skeleton
+                    variant="text"
+                    sx={{ width: "100%", fontSize: 24 }}
+                  />
+                  <Skeleton
+                    variant="text"
+                    sx={{ width: "60%", fontSize: 16 }}
+                  />
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };
 

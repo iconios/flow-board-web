@@ -4,6 +4,10 @@ import { DndListSchema } from "./list.types";
 export const DndBoardContextSchema = z.object({
   lists: z.array(DndListSchema),
   activeId: z.string().or(z.null()),
+  setLists: z.function({
+    input: [z.array(DndListSchema)],
+    output: z.void(),
+  }),
   moveTask: z.function({
     input: [z.string(), z.string()],
     output: z.void(),

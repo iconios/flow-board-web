@@ -40,6 +40,7 @@ import { useEffect, useState } from "react";
 import { NotificationBarType } from "@/lib/types";
 import { useSocket } from "@/lib/socketProvider";
 import useDragPersistence from "@/hooks/useDragPersistence";
+import { useHandleTaskReorder } from "@/hooks/useHandleTaskReorder";
 
 const DndBoardLists = ({
   boardId,
@@ -53,11 +54,13 @@ const DndBoardLists = ({
   userId: string;
 }) => {
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
+  const handleTaskReorderSuccess = useHandleTaskReorder();
   const socket = useSocket();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
-  const { persistListReorder, persistTaskReorder, persistTaskMove } = useDragPersistence();
+  const { persistListReorder, persistTaskReorder, persistTaskMove } =
+    useDragPersistence();
   const [openCreateListDialog, setOpenCreateListDialog] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const {
@@ -94,10 +97,7 @@ const DndBoardLists = ({
       return;
     }
 
-    const handleSuccess = (response: {
-      message: string;
-      roomId: string;
-    }) => {
+    const handleSuccess = (response: { message: string; roomId: string }) => {
       setNotification({
         message: `${response.message} for room-id ${response?.roomId}`,
         messageType: "success",
@@ -113,9 +113,13 @@ const DndBoardLists = ({
 
     socket.on("room:join:success", handleSuccess);
     socket.on("room:join:error", handleError);
-    socket.on("task:move:success", handleSuccess);
+    socket.on("task:move:success", (response) =>
+      handleTaskReorderSuccess(response),
+    );
     socket.on("task:move:error", handleError);
-    socket.on("task:reorder:success", handleSuccess);
+    socket.on("task:reorder:success", (response) =>
+      handleTaskReorderSuccess(response),
+    );
     socket.on("task:reorder:error", handleError);
     socket.on("list:reorder:success", handleSuccess);
     socket.on("list:reorder:error", handleError);
@@ -131,6 +135,12 @@ const DndBoardLists = ({
     return () => {
       socket.off("room:join:success", handleSuccess);
       socket.off("room:join:error", handleError);
+      socket.off("task:reorder:error", handleError);
+      socket.off("list:reorder:success", handleSuccess);
+      socket.off("list:reorder:error", handleError);
+      socket.off("task:move:success", handleSuccess);
+      socket.off("task:move:error", handleError);
+      socket.off("task:reorder:success", handleSuccess);
 
       // Leave all list rooms
       if (dndLists.length > 0) {
@@ -225,7 +235,7 @@ const DndBoardLists = ({
       if (activePosition !== overPosition) {
         console.log("Reordering task within same list");
         reorderTask(activeListId, activeId, overPosition);
-        persistTaskReorder(activeId, activeListId, overPosition)
+        persistTaskReorder(activeId, activeListId, overPosition);
       }
     }
 
@@ -244,7 +254,10 @@ const DndBoardLists = ({
 
     if (isListDrag && active.id !== over.id) {
       reorderList(active.id as string, over.id as string);
-      persistListReorder(active.id as string, over?.data?.current?.position as number)
+      persistListReorder(
+        active.id as string,
+        over?.data?.current?.position as number,
+      );
     }
   };
 

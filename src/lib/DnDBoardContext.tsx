@@ -115,13 +115,14 @@ export const DndBoardProvider = ({
   const contextValue = useMemo(
     () => ({
       lists,
+      setLists,
       activeId,
       moveTask,
       reorderTask,
       setActiveId,
       reorderList,
     }),
-    [lists, activeId],
+    [lists, activeId, moveTask, reorderList, reorderTask],
   );
 
   return (

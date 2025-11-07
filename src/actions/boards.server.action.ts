@@ -61,6 +61,8 @@ const GetBoardsServerAction = async (): Promise<GetBoardsOutputType> => {
   } catch (error) {
     console.error("Error fetching board data", error);
 
+    if (error instanceof Error) throw error;
+
     throw new Error("Network error. Please try again");
   }
 };
@@ -111,6 +113,8 @@ const UpdateBoardServerAction = async (
   } catch (error) {
     console.error("Error editing board", error);
 
+    if (error instanceof Error) throw error;
+
     throw new Error("Error editing board");
   }
 };
@@ -150,6 +154,8 @@ const DeleteBoardServerAction = async (
   } catch (error) {
     console.error("Error deleting board", error);
 
+    if (error instanceof Error) throw error;
+
     throw new Error("Error deleting board");
   }
 };
@@ -187,6 +193,8 @@ const CreateBoardServerAction = async (values: {
     };
   } catch (error) {
     console.error("Error creating board", error);
+
+    if (error instanceof Error) throw error;
 
     throw new Error("Error creating board");
   }

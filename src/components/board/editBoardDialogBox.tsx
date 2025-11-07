@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -48,13 +48,7 @@ const EditBoardDialogBox = ({
     };
   }, [bg_color, title]);
 
-  const {
-    mutateAsync,
-    isSuccess,
-    isPending,
-    isError,
-    error: serverError,
-  } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (payload: {
       boardId: string;
       values: { title?: string; bg_color?: string };
@@ -63,24 +57,18 @@ const EditBoardDialogBox = ({
       queryClient.invalidateQueries({
         queryKey: ["board", user.email],
       });
-    },
-  });
-
-  useEffect(() => {
-    if (isSuccess) {
       setNotification({
         message: "Board edited successfully",
         messageType: "success",
       });
-    }
-
-    if (isError) {
+    },
+    onError: (error) => {
       setNotification({
-        message: `${serverError?.message}` || "Failed to edit board",
+        message: error.message || "Failed to edit board",
         messageType: "error",
       });
-    }
-  }, [isSuccess, isError, serverError]);
+    },
+  });
 
   const handleEditBoardSubmit = async (
     values: EditBoardInitialValuesType,

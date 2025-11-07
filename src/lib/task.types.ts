@@ -133,3 +133,15 @@ export const TaskSchema = z.object({
 });
 
 export type TaskType = z.infer<typeof TaskSchema>;
+
+export const ServerListTaskSchema = z.object({
+  _id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  dueDate: z.string(),
+  priority: z.string(),
+  position: z.number(),
+  listId: z.string(),
+});
+
+export type ServerListTaskType = z.infer<typeof ServerListTaskSchema>;

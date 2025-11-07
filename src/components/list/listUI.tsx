@@ -36,7 +36,10 @@ const ListUI = ({ list }: ListType) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: list.id, data: { type: "list", position: list.position } });
+  } = useSortable({
+    id: list.id,
+    data: { type: "list", position: list.position },
+  });
 
   // CSS styles for column drag animation
   const base = CSS.Transform.toString(transform);

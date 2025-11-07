@@ -12,7 +12,7 @@ import { GetBoardsServerAction } from "@/actions/boards.server.action";
 import CreateBoardButton from "@/components/board/createBoardButton";
 import BoardCard from "@/components/board/showBoardCard";
 import { useUserContext } from "@/lib/user.context";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import NotificationBar from "@/lib/notificationBar";
@@ -73,18 +73,8 @@ const BoardsPage = () => {
     return (
       <Container>
         <CreateBoardButton />
-        <Box>
-          <Box
-            display="flex"
-            flexDirection={{ xs: "column", sm: "row" }}
-            flexWrap="wrap"
-            justifyContent="space-around"
-            alignItems="stretch"
-            gap={2}
-            sx={{
-              mb: 4,
-            }}
-          >
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
             {boards.map((board) => (
               <BoardCard
                 bg_color={board.bg_color}
@@ -95,7 +85,7 @@ const BoardsPage = () => {
                 boardUserId={board.user._id}
               />
             ))}
-          </Box>
+          </Grid>
         </Box>
       </Container>
     );

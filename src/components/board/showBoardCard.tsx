@@ -13,12 +13,13 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
-  Container,
   Link,
+  Grid,
 } from "@mui/material";
 import { useState } from "react";
 import EditBoardDialogBox from "./editBoardDialogBox";
 import DeleteBoardDialogBox from "./deleteBoardDialogBox";
+import { useUserContext } from "@/lib/user.context";
 
 const BoardCard = ({
   bg_color,
@@ -33,6 +34,7 @@ const BoardCard = ({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { user } = useUserContext();
 
   // Handler for the Vertical More button click
   const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -65,7 +67,7 @@ const BoardCard = ({
   const encodedBg = encodeURIComponent(bg_color);
   return (
     // Container for each Board card
-    <Container maxWidth="xs">
+    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
       <Card
         sx={{
           transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
@@ -74,13 +76,6 @@ const BoardCard = ({
             boxShadow: theme.shadows[4],
           },
           minHeight: { xs: 140, sm: 160 },
-          flexShrink: 0,
-          flexBasis: {
-            xs: "100%",
-            sm: "calc(50% - 8px)",
-            md: "calc(33.333% - 4px)",
-            lg: "calc(23% - 2px)",
-          },
         }}
       >
         {/* Color Header */}
@@ -160,7 +155,13 @@ const BoardCard = ({
             </Link>
 
             {/* Menu Button */}
-            <Box sx={{ flexShrink: 0, ml: 1 }}>
+            <Box
+              sx={{
+                flexShrink: 0,
+                ml: 1,
+                display: boardUserId === user.id ? "block" : "none",
+              }}
+            >
               <IconButton
                 onClick={handleMoreClick}
                 size="medium"
@@ -246,7 +247,7 @@ const BoardCard = ({
         boardId={boardId}
         onClose={handleCloseDialog}
       />
-    </Container>
+    </Grid>
   );
 };
 

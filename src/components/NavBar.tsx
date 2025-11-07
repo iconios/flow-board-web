@@ -110,6 +110,7 @@ const NavBar = () => {
                 >
                   <Button
                     size="small"
+                    title="my-boards button"
                     sx={{
                       color: "primary.contrastText",
                       textTransform: "none",
@@ -172,11 +173,12 @@ const NavBar = () => {
               >
                 <MenuItem
                   sx={{ p: 0, display: user.id ? "block" : "none", mb: 0.5 }}
-                  LinkComponent={Link}
-                  href="/my-boards"
                 >
                   <Button
                     variant="text"
+                    title="my-boards button"
+                    LinkComponent={Link}
+                    href="/my-boards"
                     sx={{
                       bgcolor: "primary.main",
                       color: "primary.contrastText",
