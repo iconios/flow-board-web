@@ -22,7 +22,12 @@ const InAppFooter = ({
   useEffect(() => {
     if (pathname === "/my-boards") {
       setValue(0);
-    } else if (pathname === "/profile") {
+    } else if (
+      pathname === "/profile" ||
+      pathname === "/contact-us" ||
+      pathname === "/terms" ||
+      pathname === "/privacy"
+    ) {
       setValue(1);
     }
   }, [pathname]);

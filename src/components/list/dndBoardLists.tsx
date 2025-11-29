@@ -111,17 +111,23 @@ const DndBoardLists = ({
       });
     };
 
-    socket.on("room:join:success", handleSuccess);
+    const handleTaskMoveOrReorder = () => {
+      setNotification({
+        message: "Task moved. Please refresh to see changes",
+        messageType: "success",
+      });
+    };
+
+    // socket.on("room:join:success", handleSuccess);
     socket.on("room:join:error", handleError);
-    socket.on("task:move:success", (response) =>
-      handleTaskReorderSuccess(response),
-    );
+    socket.on("task:move:success", () => {
+      handleTaskMoveOrReorder();
+    });
     socket.on("task:move:error", handleError);
     socket.on("task:reorder:success", (response) =>
       handleTaskReorderSuccess(response),
     );
     socket.on("task:reorder:error", handleError);
-    socket.on("list:reorder:success", handleSuccess);
     socket.on("list:reorder:error", handleError);
 
     if (dndLists.length > 0) {

@@ -164,7 +164,10 @@ const CreateBoardButton = () => {
               },
             }}
           >
-            <DialogContentText paddingBottom={2} sx={{ ...theme.typography.body2 }}>
+            <DialogContentText
+              paddingBottom={2}
+              sx={{ ...theme.typography.body2 }}
+            >
               Enter board details
             </DialogContentText>
             <form onSubmit={formik.handleSubmit}>

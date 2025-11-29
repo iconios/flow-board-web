@@ -16,8 +16,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useUserContext } from "@/lib/user.context";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const NavBar = () => {
+  const router = useRouter();
   const { user, LogOut } = useUserContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
@@ -34,6 +36,7 @@ const NavBar = () => {
   const handleLogin = () => {
     console.log("Login clicked");
     handleMenuClose();
+    router.push("/welcome");
   };
 
   const handleLogout = () => {
@@ -124,24 +127,22 @@ const NavBar = () => {
           ) : (
             /* Desktop View */
             <Box>
-              <Box component={Link} href="/welcome">
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{
-                    textTransform: "none",
-                    fontWeight: 600,
-                    bgcolor: "primary.main",
-                    ":hover": { bgcolor: "primary.dark" },
-                    fontSize: { sm: "0.9rem", md: "1rem" },
-                    px: 3,
-                    py: 1.5,
-                  }}
-                  onClick={user ? handleLogout : handleLogin}
-                >
-                  {user.id ? "Logout" : "Login"}
-                </Button>
-              </Box>
+              <Button
+                variant="contained"
+                size="small"
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  bgcolor: "primary.main",
+                  ":hover": { bgcolor: "primary.dark" },
+                  fontSize: { sm: "0.9rem", md: "1rem" },
+                  px: 3,
+                  py: 1.5,
+                }}
+                onClick={user ? handleLogout : handleLogin}
+              >
+                {user.id ? "Logout" : "Login"}
+              </Button>
             </Box>
           )}
         </Toolbar>

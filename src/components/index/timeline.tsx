@@ -1,10 +1,3 @@
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 import { Box, Typography } from "@mui/material";
 import Image from "next/image";
 
@@ -42,21 +35,21 @@ const Timelines = () => {
     },
   ];
   return (
-    <Box component="ol">        
-        {items.map((item) => (
-            <Box component="li" key={item.id}>
-            <Box component="span" sx={{ borderRadius: "100%" }} />
-            <Box>
-                <Typography>{item.label}</Typography>
-            </Box>
-            <Image
-                src={`${item.image}`}
-                alt={`${item.label}`}
-                width={320}
-                height={748}
-              />
-        </Box>     
-        ))}   
+    <Box component="ol">
+      {items.map((item) => (
+        <Box component="li" key={item.id}>
+          <Box component="span" sx={{ borderRadius: "100%" }} />
+          <Box>
+            <Typography>{item.label}</Typography>
+          </Box>
+          <Image
+            src={`${item.image}`}
+            alt={`${item.label}`}
+            width={320}
+            height={748}
+          />
+        </Box>
+      ))}
     </Box>
   );
 };

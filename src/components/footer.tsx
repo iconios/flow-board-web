@@ -1,5 +1,6 @@
 "use client";
 import { Box, Container, Typography, Stack, useTheme } from "@mui/material";
+import Link from "next/link";
 
 const Footer = ({ xs, sm, md }: { xs: string; sm: string; md: string }) => {
   const theme = useTheme();
@@ -25,42 +26,50 @@ const Footer = ({ xs, sm, md }: { xs: string; sm: string; md: string }) => {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography
-            variant="overline"
-            color="text.secondary"
-            sx={{ textAlign: { xs: "center", sm: "left" } }}
-          >
-            © {new Date().getFullYear()} Nerdy Flow Board
-          </Typography>
+          <Link href={"/"} style={{ textDecoration: "none" }}>
+            <Typography
+              variant="overline"
+              color="text.secondary"
+              sx={{ textAlign: { xs: "center", sm: "left" } }}
+            >
+              © {new Date().getFullYear()} Nerdy Flow Board
+            </Typography>
+          </Link>
 
           <Stack direction="row" spacing={3}>
-            <Typography
-              variant="overline"
-              color="text.secondary"
-              sx={{
-                "&:hover": { color: "primary.main", cursor: "pointer" },
-              }}
-            >
-              Privacy
-            </Typography>
-            <Typography
-              variant="overline"
-              color="text.secondary"
-              sx={{
-                "&:hover": { color: "primary.main", cursor: "pointer" },
-              }}
-            >
-              Terms
-            </Typography>
-            <Typography
-              variant="overline"
-              color="text.secondary"
-              sx={{
-                "&:hover": { color: "primary.main", cursor: "pointer" },
-              }}
-            >
-              Contact
-            </Typography>
+            <Link href={"/privacy"} style={{ textDecoration: "none" }}>
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{
+                  "&:hover": { color: "primary.main", cursor: "pointer" },
+                }}
+              >
+                Privacy
+              </Typography>
+            </Link>
+            <Link href={"/terms"} style={{ textDecoration: "none" }}>
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{
+                  "&:hover": { color: "primary.main", cursor: "pointer" },
+                }}
+              >
+                Terms
+              </Typography>
+            </Link>
+            <Link href={"/contact-us"} style={{ textDecoration: "none" }}>
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{
+                  "&:hover": { color: "primary.main", cursor: "pointer" },
+                }}
+              >
+                Contact
+              </Typography>
+            </Link>
           </Stack>
         </Stack>
       </Container>

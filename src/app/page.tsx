@@ -44,7 +44,6 @@ const Home = () => {
         bgcolor: "#ffffff",
         minHeight: "100vh",
         flex: 1,
-        pb: { xs: 20, sm: 16 },
       }}
     >
       <NavBar />
