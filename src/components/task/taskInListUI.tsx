@@ -7,17 +7,20 @@ import DeleteTaskDialog from "./deleteTaskDialog";
 import { CSSProperties, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import secureLocalStorage from "react-secure-storage";
 
 const TaskInListUI = ({
   title,
   taskId,
   listId,
   boardId,
+  bgColor,
 }: {
   title: string;
   taskId: string;
   listId: string;
   boardId: string;
+  bgColor: string;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -42,6 +45,12 @@ const TaskInListUI = ({
   const handleCloseDialog = () => {
     setOpen(false);
   };
+
+  const handleNavigation = () => {
+    const previousUrl = window.location.href;
+    secureLocalStorage.setItem("previousUrl", previousUrl);
+  };
+
   return (
     <>
       {/* Container for each Task in List */}
@@ -62,13 +71,14 @@ const TaskInListUI = ({
       >
         <Link
           href={`/my-task/${taskId}/list/${listId}`}
+          onClick={handleNavigation}
           style={{ textDecoration: "none", flexGrow: 1 }}
         >
           <Typography variant="h6" color="info">
             {title}
           </Typography>
         </Link>
-        <IconButton onClick={() => setOpen(true)}>
+        <IconButton onClick={() => setOpen(true)} sx={{ color: bgColor }}>
           <Delete />
         </IconButton>
       </Box>

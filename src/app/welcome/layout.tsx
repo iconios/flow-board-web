@@ -36,7 +36,7 @@ const TabsLayout = ({ children }: { children: React.ReactNode }) => {
           }}
         >
           <Typography
-            variant="h6"
+            variant="h5"
             align="center"
             sx={{ py: { xs: 1, sm: 4 }, fontWeight: "bold" }}
           >
@@ -44,7 +44,7 @@ const TabsLayout = ({ children }: { children: React.ReactNode }) => {
           </Typography>
           {children}
         </Box>
-        <Footer />
+        <Footer xs={"100%"} sm={"100%"} md={"70%"} />
       </Paper>
     </Box>
   );

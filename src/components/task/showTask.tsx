@@ -26,6 +26,7 @@ import {
   Select,
   Stack,
   TextField,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FormikHelpers, useFormik } from "formik";
@@ -37,11 +38,13 @@ import { useUserContext } from "@/lib/user.context";
 import { useRouter } from "next/navigation";
 
 const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
   const queryClient = useQueryClient();
   const { user, isLoading } = useUserContext();
+  const bodyStyle = { ...theme.typography.body2 };
   const router = useRouter();
 
   const {
@@ -174,7 +177,7 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
   if (!task) return <p>Task not found</p>;
 
   return (
-    <Container>
+    <Container sx={{ marginBottom: 16 }}>
       {notification && (
         <NotificationBar
           message={notification.message}
@@ -189,6 +192,15 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
               label="Title"
               required
               id="title"
+              size="small"
+              slotProps={{
+                inputLabel: {
+                  sx: bodyStyle,
+                },
+                input: {
+                  sx: bodyStyle,
+                },
+              }}
               name="title"
               variant="outlined"
               value={formik.values.title}
@@ -233,6 +245,15 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
               name="description"
               variant="outlined"
               multiline
+              size="small"
+              slotProps={{
+                inputLabel: {
+                  sx: bodyStyle,
+                },
+                input: {
+                  sx: bodyStyle,
+                },
+              }}
               rows={4}
               value={formik.values.description}
               onChange={formik.handleChange}
@@ -279,6 +300,15 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
               id="dueDate"
               name="dueDate"
               variant="outlined"
+              size="small"
+              slotProps={{
+                inputLabel: {
+                  sx: bodyStyle,
+                },
+                input: {
+                  sx: bodyStyle,
+                },
+              }}
               value={isoToDatetimeLocal(formik.values.dueDate)}
               onChange={(e) => {
                 formik.setFieldValue(
@@ -322,13 +352,21 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
             <CommentsInTask taskId={taskId} />
 
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+              <InputLabel id="demo-simple-select-label" sx={bodyStyle}>
+                Priority
+              </InputLabel>
               <Select
                 type="text"
                 label="Priority"
                 id="priority"
                 name="priority"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 value={formik.values.priority}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -336,10 +374,18 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
                   formik.touched.priority && Boolean(formik.errors.priority)
                 }
               >
-                <MenuItem value="low">low</MenuItem>
-                <MenuItem value="medium">medium</MenuItem>
-                <MenuItem value="high">high</MenuItem>
-                <MenuItem value="critical">critical</MenuItem>
+                <MenuItem value="low" sx={bodyStyle}>
+                  low
+                </MenuItem>
+                <MenuItem value="medium" sx={bodyStyle}>
+                  medium
+                </MenuItem>
+                <MenuItem value="high" sx={bodyStyle}>
+                  high
+                </MenuItem>
+                <MenuItem value="critical" sx={bodyStyle}>
+                  critical
+                </MenuItem>
               </Select>
             </FormControl>
             {isFieldDirty("priority") && (
@@ -377,6 +423,15 @@ const ShowTask = ({ taskId, listId }: { taskId: string; listId: string }) => {
               id="position"
               name="position"
               variant="outlined"
+              size="small"
+              slotProps={{
+                inputLabel: {
+                  sx: bodyStyle,
+                },
+                input: {
+                  sx: bodyStyle,
+                },
+              }}
               value={formik.values.position}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}

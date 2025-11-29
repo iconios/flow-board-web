@@ -14,6 +14,7 @@ import {
   Select,
   Stack,
   TextField,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FormikHelpers, useFormik } from "formik";
@@ -28,16 +29,19 @@ import {
   CreateListInputType,
 } from "@/lib/list.types";
 import { CreateListServerAction } from "@/actions/lists.server.action";
+import { Add, Cancel } from "@mui/icons-material";
 
 const CreateListDialog = ({
   boardId,
   open,
   onClose,
 }: CreateListComponentInputType) => {
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
   const queryClient = useQueryClient();
+  const bodyStyle = { ...theme.typography.body2 };
 
   const initialValues = {
     title: "",
@@ -119,10 +123,17 @@ const CreateListDialog = ({
             width: { xs: "100%", sm: "600px" },
           }}
         >
-          <DialogTitle id="create-list-dialog-title">Create List</DialogTitle>
+          <DialogTitle
+            id="create-list-dialog-title"
+            component="h6"
+            sx={{ textAlign: "center" }}
+          >
+            Create List
+          </DialogTitle>
           <DialogContentText
             id="create-list-dialog-description"
             paddingBottom={2}
+            sx={{ ...theme.typography.body2 }}
           >
             Enter the details of the List
           </DialogContentText>
@@ -134,6 +145,15 @@ const CreateListDialog = ({
                 required
                 id="title"
                 name="title"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 variant="outlined"
                 value={formik.values.title}
                 onChange={formik.handleChange}
@@ -143,20 +163,32 @@ const CreateListDialog = ({
               />
 
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                <InputLabel id="demo-simple-select-label" sx={bodyStyle}>
+                  Status
+                </InputLabel>
                 <Select
                   type="text"
                   label="Status"
                   id="status"
                   name="status"
                   variant="outlined"
+                  size="small"
+                  slotProps={{
+                    input: {
+                      sx: bodyStyle,
+                    },
+                  }}
                   value={formik.values.status}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={formik.touched.status && Boolean(formik.errors.status)}
                 >
-                  <MenuItem value="active">active</MenuItem>
-                  <MenuItem value="archive">archive</MenuItem>
+                  <MenuItem value="active" sx={bodyStyle}>
+                    active
+                  </MenuItem>
+                  <MenuItem value="archive" sx={bodyStyle}>
+                    archive
+                  </MenuItem>
                 </Select>
               </FormControl>
 
@@ -166,6 +198,15 @@ const CreateListDialog = ({
                 id="position"
                 name="position"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 value={formik.values.position}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -176,28 +217,30 @@ const CreateListDialog = ({
               />
             </Stack>
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <DialogActions>
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  disabled={mutation.isPending}
-                >
-                  {mutation.isPending ? "Creating..." : "Create"}
-                </Button>
-                <Button
-                  color="secondary"
-                  variant="outlined"
-                  sx={{ mt: 2 }}
-                  onClick={handleDialogClose}
-                  disabled={mutation.isPending}
-                >
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Stack>
+            <DialogActions
+              sx={{ justifyContent: "space-between", flexDirection: "row" }}
+            >
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                sx={{ mt: 2 }}
+                disabled={mutation.isPending}
+                startIcon={<Add />}
+              >
+                {mutation.isPending ? "Creating..." : "Create"}
+              </Button>
+              <Button
+                color="secondary"
+                variant="outlined"
+                sx={{ mt: 2, borderColor: "#FF6D00", color: "#FF6D00" }}
+                onClick={handleDialogClose}
+                disabled={mutation.isPending}
+                endIcon={<Cancel />}
+              >
+                Cancel
+              </Button>
+            </DialogActions>
           </form>
         </DialogContent>
       </Dialog>

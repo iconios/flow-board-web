@@ -16,6 +16,7 @@ import {
   DialogActions,
   Button,
   DialogTitle,
+  useTheme,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import { useMemo, useState } from "react";
@@ -30,6 +31,7 @@ const EditBoardDialogBox = ({
   onClose,
 }: EditBoardInputType) => {
   // Initialize the variables and constants
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const { user } = useUserContext();
   const [notification, setNotification] = useState<NotificationBarType | null>(
@@ -113,9 +115,13 @@ const EditBoardDialogBox = ({
           py: 1,
         }}
       >
-        <DialogTitle>Edit Board</DialogTitle>
+        <DialogTitle component="h6" sx={{ textAlign: "center" }}>
+          Edit Board
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>Enter the board fields values</DialogContentText>
+          <DialogContentText sx={{ ...theme.typography.body2 }}>
+            Enter the board fields values
+          </DialogContentText>
           <form onSubmit={formik.handleSubmit}>
             <Stack direction="column" spacing={2}>
               <TextField

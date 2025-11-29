@@ -7,7 +7,7 @@ import {
   CreateBoardUISchema,
   NotificationBarType,
 } from "@/lib/types";
-import { Add } from "@mui/icons-material";
+import { Add, Cancel } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -21,6 +21,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormikHelpers, useFormik } from "formik";
@@ -29,6 +30,7 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const CreateBoardButton = () => {
   // Initialize the variables and constants
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<NotificationBarType | null>(
@@ -119,89 +121,145 @@ const CreateBoardButton = () => {
           alignItems: "center",
         }}
       >
-        <IconButton onClick={handleDialogOpen}>
-          <Add />
-          <Typography>Create a Board</Typography>
-        </IconButton>
-      </Box>
-      <Dialog
-        open={open}
-        onClose={handleDialogClose}
-        sx={{
-          borderRadius: 5,
-          px: 1,
-          py: 2,
-        }}
-      >
-        <DialogTitle>Create a Board</DialogTitle>
-        <DialogContent
+        <IconButton
+          onClick={handleDialogOpen}
           sx={{
-            width: {
-              xs: "100%",
-              sm: "400px",
-              md: "500px",
-            },
+            color: theme.palette.primary.main,
+            borderRadius: 0,
+            borderStyle: "solid",
           }}
         >
-          <DialogContentText paddingBottom={2}>
-            Enter board details
-          </DialogContentText>
-          <form onSubmit={formik.handleSubmit}>
-            <Stack direction="column" spacing={2}>
-              <TextField
-                type="text"
-                label="Title"
-                required
-                id="title"
-                name="title"
-                variant="outlined"
-                value={formik.values.title}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.title && Boolean(formik.errors.title)}
-                helperText={formik.touched.title && formik.errors.title}
-              />
+          <Add />
+          <Typography
+            variant="body2"
+            sx={{
+              color: theme.palette.primary.main,
+              fontWeight: "bold",
+              ":hover": theme.palette.primary.dark,
+            }}
+          >
+            Create a Board
+          </Typography>
+        </IconButton>
+      </Box>
+      {open && (
+        <Dialog
+          open={open}
+          onClose={handleDialogClose}
+          sx={{
+            borderRadius: 5,
+            px: 1,
+            py: 2,
+          }}
+        >
+          <DialogTitle component="h6" sx={{ textAlign: "center" }}>
+            Create a Board
+          </DialogTitle>
+          <DialogContent
+            sx={{
+              width: {
+                xs: "100%",
+                sm: "400px",
+                md: "500px",
+              },
+            }}
+          >
+            <DialogContentText paddingBottom={2} sx={{ ...theme.typography.body2 }}>
+              Enter board details
+            </DialogContentText>
+            <form onSubmit={formik.handleSubmit}>
+              <Stack direction="column" spacing={2}>
+                <TextField
+                  type="text"
+                  label="Title"
+                  required
+                  id="title"
+                  name="title"
+                  size="small"
+                  variant="outlined"
+                  value={formik.values.title}
+                  slotProps={{
+                    inputLabel: {
+                      sx: {
+                        ...theme.typography.body2,
+                      },
+                    },
+                    input: {
+                      sx: {
+                        ...theme.typography.body2,
+                      },
+                    },
+                  }}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.touched.title && Boolean(formik.errors.title)}
+                  helperText={formik.touched.title && formik.errors.title}
+                />
 
-              <TextField
-                type="color"
-                label="Background Color"
-                id="bg_color"
-                name="bg_color"
-                variant="outlined"
-                value={formik.values.bg_color}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  formik.touched.bg_color && Boolean(formik.errors.bg_color)
-                }
-                helperText={formik.touched.bg_color && formik.errors.bg_color}
-              />
-            </Stack>
-
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <DialogActions>
+                <TextField
+                  type="color"
+                  label="Background Color"
+                  id="bg_color"
+                  name="bg_color"
+                  variant="outlined"
+                  size="small"
+                  slotProps={{
+                    inputLabel: {
+                      sx: {
+                        ...theme.typography.body2,
+                      },
+                    },
+                    input: {
+                      sx: {
+                        ...theme.typography.body2,
+                      },
+                    },
+                  }}
+                  value={formik.values.bg_color}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.bg_color && Boolean(formik.errors.bg_color)
+                  }
+                  helperText={formik.touched.bg_color && formik.errors.bg_color}
+                />
+              </Stack>
+              <DialogActions
+                sx={{
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  display: "flex",
+                }}
+              >
                 <Button
                   type="submit"
                   color="primary"
                   variant="contained"
-                  sx={{ mt: 2 }}
+                  sx={{ mt: 2, py: 1 }}
                   disabled={mutation.isPending}
+                  startIcon={<Add />}
                 >
                   {mutation.isPending ? "Creating..." : "Create"}
                 </Button>
                 <Button
                   color="secondary"
                   variant="outlined"
-                  sx={{ mt: 2 }}
+                  sx={{
+                    mt: 2,
+                    color: "#FF6D00",
+                    borderColor: theme.palette.primary.main,
+                    py: 1,
+                  }}
                   onClick={handleDialogClose}
+                  endIcon={<Cancel />}
                 >
                   Cancel
                 </Button>
               </DialogActions>
-            </Stack>
-          </form>
-        </DialogContent>
-      </Dialog>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
     </Paper>
   );
 };

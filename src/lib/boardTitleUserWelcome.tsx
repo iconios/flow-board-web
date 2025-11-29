@@ -27,12 +27,12 @@ const BoardTitleUserWelcome = ({
       }}
     >
       {/* Board title for lists */}
-      <Typography variant="h5" fontWeight={600}>
-        {title}
+      <Typography variant="h6" fontWeight={600}>
+        Title - {title}
       </Typography>
       {/* Board user welcome message */}
       <Box>
-        <Typography variant="body1" fontWeight={600}>
+        <Typography variant="body2" fontWeight={600}>
           Hello {user.firstname}
         </Typography>
       </Box>

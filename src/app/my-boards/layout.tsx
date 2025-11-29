@@ -1,7 +1,7 @@
-import Footer from "@/components/footer";
-import NavBar from "@/components/NavBar";
+import InAppFooter from "@/components/InAppFooter";
+import InAppHeader from "@/components/InAppHeader";
 import { SocketProvider } from "@/lib/socketProvider";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 
 const BoardsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -24,7 +24,7 @@ const BoardsLayout = ({ children }: { children: React.ReactNode }) => {
           minHeight: { xs: "100vh", md: "auto" },
         }}
       >
-        <NavBar />
+        <InAppHeader title={"My Boards"} backView={false} />
         <Box
           sx={{
             display: "flex",
@@ -36,16 +36,9 @@ const BoardsLayout = ({ children }: { children: React.ReactNode }) => {
             p: { xs: 0, sm: 4 },
           }}
         >
-          <Typography
-            variant="h6"
-            align="center"
-            sx={{ py: { xs: 1, sm: 4 }, fontWeight: "bold" }}
-          >
-            My Boards
-          </Typography>
           <SocketProvider>{children}</SocketProvider>
         </Box>
-        <Footer />
+        <InAppFooter xs={"100%"} sm={"80%"} md={"70%"} />
       </Paper>
     </Box>
   );

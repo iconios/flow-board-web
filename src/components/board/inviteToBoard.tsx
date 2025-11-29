@@ -12,6 +12,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -31,6 +32,7 @@ const InviteToBoard = ({
   userId: string;
 }) => {
   const { user } = useUserContext();
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
@@ -121,6 +123,19 @@ const InviteToBoard = ({
                 type="email"
                 variant="outlined"
                 label="Email"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: {
+                      ...theme.typography.body2,
+                    },
+                  },
+                  input: {
+                    sx: {
+                      ...theme.typography.body2,
+                    },
+                  },
+                }}
                 required
                 value={formik.values.email}
                 onChange={formik.handleChange}
@@ -148,7 +163,7 @@ const InviteToBoard = ({
             pl: 2,
           }}
         >
-          <Typography variant="h5" style={{ fontWeight: 600 }}>
+          <Typography variant="h6" style={{ fontWeight: 600 }}>
             Members
           </Typography>
           <BoardMembersList boardId={boardId} />

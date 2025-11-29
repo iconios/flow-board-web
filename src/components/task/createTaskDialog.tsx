@@ -1,6 +1,6 @@
 "use client";
 
-import { Add } from "@mui/icons-material";
+import { Add, Cancel } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -9,13 +9,15 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Fab,
   FormControl,
-  IconButton,
   InputLabel,
   MenuItem,
   Select,
   Stack,
   TextField,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useState } from "react";
 import { FormikHelpers, useFormik } from "formik";
@@ -41,6 +43,8 @@ const CreateTaskDialog = ({
   listId: string;
   boardId: string;
 }) => {
+  const theme = useTheme();
+  const bodyStyle = { ...theme.typography.body2 };
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -131,16 +135,16 @@ const CreateTaskDialog = ({
           justifyContent: "flex-end",
         }}
       >
-        <IconButton
+        <Fab
           sx={{
-            pr: { xs: 2 },
-            width: "200px",
+            p: 2,
           }}
+          variant="extended"
           onClick={handleDialogOpen}
         >
-          <Add />
-          Add new task
-        </IconButton>
+          <Add sx={{ mr: 1 }} />
+          New task
+        </Fab>
       </Box>
 
       {/* Dialog box that opens when "Add new task" button is clicked */}
@@ -155,10 +159,17 @@ const CreateTaskDialog = ({
             width: { xs: "100%", sm: "600px" },
           }}
         >
-          <DialogTitle id="create-task-dialog-title">Create Task</DialogTitle>
+          <DialogTitle
+            id="create-task-dialog-title"
+            component="h6"
+            sx={{ textAlign: "center" }}
+          >
+            Create Task
+          </DialogTitle>
           <DialogContentText
             id="create-task-dialog-description"
             paddingBottom={2}
+            sx={{ ...theme.typography.body2 }}
           >
             Enter the details of the task
           </DialogContentText>
@@ -171,6 +182,15 @@ const CreateTaskDialog = ({
                 id="title"
                 name="title"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 value={formik.values.title}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -184,6 +204,15 @@ const CreateTaskDialog = ({
                 id="description"
                 name="description"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 multiline
                 rows={4}
                 value={formik.values.description}
@@ -204,6 +233,15 @@ const CreateTaskDialog = ({
                 id="dueDate"
                 name="dueDate"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 value={isoToDatetimeLocal(formik.values.dueDate)}
                 onChange={(e) => {
                   formik.setFieldValue(
@@ -217,13 +255,21 @@ const CreateTaskDialog = ({
               />
 
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+                <InputLabel id="demo-simple-select-label" sx={bodyStyle}>
+                  Priority
+                </InputLabel>
                 <Select
                   type="text"
                   label="Priority"
                   id="priority"
                   name="priority"
                   variant="outlined"
+                  size="small"
+                  slotProps={{
+                    input: {
+                      sx: bodyStyle,
+                    },
+                  }}
                   value={formik.values.priority}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -231,10 +277,18 @@ const CreateTaskDialog = ({
                     formik.touched.priority && Boolean(formik.errors.priority)
                   }
                 >
-                  <MenuItem value="low">low</MenuItem>
-                  <MenuItem value="medium">medium</MenuItem>
-                  <MenuItem value="high">high</MenuItem>
-                  <MenuItem value="critical">critical</MenuItem>
+                  <MenuItem value="low" sx={bodyStyle}>
+                    low
+                  </MenuItem>
+                  <MenuItem value="medium" sx={bodyStyle}>
+                    medium
+                  </MenuItem>
+                  <MenuItem value="high" sx={bodyStyle}>
+                    high
+                  </MenuItem>
+                  <MenuItem value="critical" sx={bodyStyle}>
+                    critical
+                  </MenuItem>
                 </Select>
               </FormControl>
 
@@ -244,6 +298,15 @@ const CreateTaskDialog = ({
                 id="position"
                 name="position"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 value={formik.values.position}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -254,28 +317,35 @@ const CreateTaskDialog = ({
               />
             </Stack>
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <DialogActions>
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  disabled={mutation.isPending}
-                >
-                  {mutation.isPending ? "Creating..." : "Create"}
-                </Button>
-                <Button
-                  color="secondary"
-                  variant="outlined"
-                  sx={{ mt: 2 }}
-                  onClick={handleDialogClose}
-                  disabled={mutation.isPending}
-                >
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Stack>
+            <DialogActions
+              sx={{ justifyContent: "space-between", flexDirection: "row" }}
+            >
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                sx={{ mt: 2 }}
+                disabled={mutation.isPending}
+                startIcon={<Add />}
+              >
+                {mutation.isPending ? "Creating..." : "Create"}
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  mt: 2,
+                  borderColor: "#FF6D00",
+                  color: "#FF6D00",
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                }}
+                onClick={handleDialogClose}
+                disabled={mutation.isPending}
+                endIcon={<Cancel />}
+              >
+                Cancel
+              </Button>
+            </DialogActions>
           </form>
         </DialogContent>
       </Dialog>

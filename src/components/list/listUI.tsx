@@ -23,7 +23,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import theme from "@/lib/theme";
 
-const ListUI = ({ list }: ListType) => {
+const ListUI = ({ list, bgColor }: { list: ListType; bgColor: string }) => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const isMdUp = useMediaQuery(theme.breakpoints.up("md"));
@@ -69,7 +69,7 @@ const ListUI = ({ list }: ListType) => {
         opacity: isDragging ? 0.6 : 1,
         bgcolor: isDragging ? "#eff6ff" : "background.paper",
         border: isDragging ? "2px dashed #90cdf4" : "1px solid",
-        borderColor: isDragging ? "#90cdf4" : "divider",
+        borderColor: isDragging ? "#90cdf4" : bgColor,
         transition: "all 0.2s ease",
         cursor: isDragging ? "grabbing" : "grab",
         "&:hover": {
@@ -94,7 +94,10 @@ const ListUI = ({ list }: ListType) => {
               flexDirection: "row",
             }}
           >
-            <IconButton onClick={() => setOpenEditDialog(true)}>
+            <IconButton
+              onClick={() => setOpenEditDialog(true)}
+              sx={{ color: bgColor }}
+            >
               <Edit />
             </IconButton>
             <EditListDialog
@@ -106,7 +109,10 @@ const ListUI = ({ list }: ListType) => {
               listId={list.id}
               onClose={handleCloseEditDialog}
             />
-            <IconButton onClick={() => setOpenDeleteDialog(true)}>
+            <IconButton
+              onClick={() => setOpenDeleteDialog(true)}
+              sx={{ color: bgColor }}
+            >
               <Delete />
             </IconButton>
             <DeleteBListDialog
@@ -135,6 +141,7 @@ const ListUI = ({ list }: ListType) => {
                 listId={task.listId}
                 boardId={list.boardId}
                 key={task._id}
+                bgColor={bgColor}
               />
             ))}
           </SortableContext>

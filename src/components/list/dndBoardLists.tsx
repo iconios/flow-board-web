@@ -307,7 +307,7 @@ const DndBoardLists = ({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <Box padding={{ xs: 2 }}>
+      <Box padding={{ xs: 2 }} sx={{ marginBottom: { xs: 12, sm: 16 } }}>
         {notification && (
           <NotificationBar
             message={notification.message}
@@ -348,7 +348,7 @@ const DndBoardLists = ({
               disabled={showInvite}
             >
               <Add />
-              <Typography variant="subtitle1" sx={{ ml: 1 }}>
+              <Typography variant="body2" sx={{ ml: 1 }}>
                 Add new List
               </Typography>
             </IconButton>
@@ -358,7 +358,10 @@ const DndBoardLists = ({
                 checked={showInvite}
                 onChange={() => setShowInvite(!showInvite)}
               />
-              <Typography variant="h6" sx={{ fontWeight: 600, ml: 1, pt: 0.5 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontWeight: 600, ml: 1, pt: 0.5 }}
+              >
                 Invite to Board
               </Typography>
             </div>
@@ -366,11 +369,13 @@ const DndBoardLists = ({
         </Box>
 
         {/* Create new List Dialog Box */}
-        <CreateListDialog
-          boardId={boardId}
-          open={openCreateListDialog}
-          onClose={handleDialogClose}
-        />
+        {openCreateListDialog && (
+          <CreateListDialog
+            boardId={boardId}
+            open={openCreateListDialog}
+            onClose={handleDialogClose}
+          />
+        )}
 
         {/* Container to display all the Lists in a Board */}
         <Box
@@ -389,7 +394,7 @@ const DndBoardLists = ({
             }
           >
             {dndLists.map((list) => (
-              <ListUI list={list} key={list.id} />
+              <ListUI list={list} key={list.id} bgColor={bgColor} />
             ))}
           </SortableContext>
         </Box>

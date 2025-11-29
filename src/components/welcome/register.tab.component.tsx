@@ -19,6 +19,7 @@ import {
   FormControlLabel,
   InputAdornment,
   IconButton,
+  useTheme,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import {
@@ -35,6 +36,7 @@ import { useMutation } from "@tanstack/react-query";
 
 const RegisterTabPanel = () => {
   // 1. Initialize all variables or constants
+  const theme = useTheme();
   const [checked, setChecked] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [notification, setNotification] = useState<NotificationBarType | null>(
@@ -126,6 +128,19 @@ const RegisterTabPanel = () => {
               variant="outlined"
               value={formik.values.firstname}
               onChange={formik.handleChange}
+              size="small"
+              slotProps={{
+                inputLabel: {
+                  style: {
+                    ...theme.typography.body2,
+                  },
+                },
+                input: {
+                  sx: {
+                    ...theme.typography.body2,
+                  },
+                },
+              }}
               onBlur={formik.handleBlur}
               error={
                 formik.touched.firstname && Boolean(formik.errors.firstname)
@@ -141,6 +156,19 @@ const RegisterTabPanel = () => {
               name="lastname"
               variant="outlined"
               value={formik.values.lastname}
+              size="small"
+              slotProps={{
+                inputLabel: {
+                  style: {
+                    ...theme.typography.body2,
+                  },
+                },
+                input: {
+                  sx: {
+                    ...theme.typography.body2,
+                  },
+                },
+              }}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.lastname && Boolean(formik.errors.lastname)}
@@ -156,6 +184,19 @@ const RegisterTabPanel = () => {
             name="email"
             variant="outlined"
             value={formik.values.email}
+            size="small"
+            slotProps={{
+              inputLabel: {
+                style: {
+                  ...theme.typography.body2,
+                },
+              },
+              input: {
+                sx: {
+                  ...theme.typography.body2,
+                },
+              },
+            }}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={formik.touched.email && Boolean(formik.errors.email)}
@@ -171,6 +212,7 @@ const RegisterTabPanel = () => {
             name="password"
             variant="outlined"
             value={formik.values.password}
+            size="small"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             error={formik.touched.password && Boolean(formik.errors.password)}
@@ -189,6 +231,14 @@ const RegisterTabPanel = () => {
                     </IconButton>
                   </InputAdornment>
                 ),
+                sx: {
+                  ...theme.typography.body2,
+                },
+              },
+              inputLabel: {
+                style: {
+                  ...theme.typography.body2,
+                },
               },
             }}
           />
@@ -197,7 +247,7 @@ const RegisterTabPanel = () => {
         <FormControlLabel
           control={
             <Checkbox
-              size="large"
+              size="medium"
               checked={checked}
               required
               aria-label="Terms of service checkbox"
@@ -205,6 +255,13 @@ const RegisterTabPanel = () => {
               sx={{ pt: 2 }}
             />
           }
+          slotProps={{
+            typography: {
+              sx: {
+                ...theme.typography.body2,
+              },
+            },
+          }}
           label="I agree to the Terms of Service and Privacy Policy"
         />
 
@@ -213,7 +270,7 @@ const RegisterTabPanel = () => {
           color="primary"
           variant="contained"
           fullWidth
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, py: 1 }}
           disabled={!checked}
         >
           Sign Up

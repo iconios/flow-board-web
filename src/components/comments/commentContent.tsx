@@ -15,6 +15,7 @@ import {
   ListItemAvatar,
   ListItemText,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -23,6 +24,7 @@ import EditCommentDialog from "./editCommentDialog";
 
 const CommentContent = ({ comment }: { comment: CommentType }) => {
   const { user } = useUserContext();
+  const theme = useTheme();
   const firstAlphabet = user?.firstname[0];
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<NotificationBarType | null>(
@@ -96,8 +98,13 @@ const CommentContent = ({ comment }: { comment: CommentType }) => {
         </ListItemAvatar>
         <ListItemText
           primary={comment.content}
+          sx={{
+            "& .MuiListItemText-primary": {
+              ...theme.typography.body2,
+            },
+          }}
           secondary={
-            <Typography variant="subtitle2">
+            <Typography variant="overline">
               {comment.updatedAt ? `Updated at: ${comment.updatedAt}` : ""}
             </Typography>
           }

@@ -7,6 +7,7 @@ import {
 } from "@/lib/comment.types";
 import NotificationBar from "@/lib/notificationBar";
 import { NotificationBarType } from "@/lib/types";
+import { Cancel, Edit } from "@mui/icons-material";
 import {
   Dialog,
   DialogTitle,
@@ -16,6 +17,8 @@ import {
   TextField,
   DialogActions,
   Button,
+  useTheme,
+  Typography,
 } from "@mui/material";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { FormikHelpers, useFormik } from "formik";
@@ -31,10 +34,11 @@ const EditCommentDialog = ({
 }: EditCommentFormType) => {
   // Initialize the variables and constants
   const queryClient = useQueryClient();
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
-
+  const bodyStyle = { ...theme.typography.body2 };
   const handleDialogClose = () => {
     onClose();
     setNotification(null);
@@ -113,10 +117,13 @@ const EditCommentDialog = ({
           py: 1,
         }}
       >
-        <DialogTitle>Edit Comment</DialogTitle>
+        <DialogTitle component="h6">Edit Comment</DialogTitle>
         <DialogContent>
-          <DialogContentText paddingBottom={2}>
-            Enter the comment content
+          <DialogContentText
+            paddingBottom={2}
+            sx={{ ...theme.typography.body2, textAlign: "center" }}
+          >
+            Edit the comment content
           </DialogContentText>
           <form onSubmit={formik.handleSubmit}>
             <TextField
@@ -126,6 +133,15 @@ const EditCommentDialog = ({
               id="content"
               name="content"
               variant="outlined"
+              size="small"
+              slotProps={{
+                inputLabel: {
+                  sx: bodyStyle,
+                },
+                input: {
+                  sx: bodyStyle,
+                },
+              }}
               value={formik.values.content}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -136,28 +152,35 @@ const EditCommentDialog = ({
               }}
             />
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <DialogActions>
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  disabled={isPending}
-                >
-                  {isPending ? "Editing..." : "Edit"}
-                </Button>
-                <Button
-                  color="secondary"
-                  variant="outlined"
-                  sx={{ mt: 2 }}
-                  onClick={handleDialogClose}
-                  disabled={isPending}
-                >
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Stack>
+            <DialogActions
+              sx={{ justifyContent: "space-between", flexDirection: "row" }}
+            >
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                sx={{ mt: 2 }}
+                disabled={isPending}
+                startIcon={<Edit />}
+              >
+                {isPending ? "Editing..." : "Edit"}
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  mt: 2,
+                  color: "#FF6D00",
+                  borderColor: "#FF6D00",
+                  borderWidth: 1,
+                  borderStyle: "solid",
+                }}
+                onClick={handleDialogClose}
+                disabled={isPending}
+                endIcon={<Cancel />}
+              >
+                Cancel
+              </Button>
+            </DialogActions>
           </form>
         </DialogContent>
       </Dialog>

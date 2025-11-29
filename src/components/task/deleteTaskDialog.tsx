@@ -2,6 +2,7 @@ import { DeleteTaskServerAction } from "@/actions/tasks.server.action";
 import NotificationBar from "@/lib/notificationBar";
 import { DeleteTaskFormInputType } from "@/lib/task.types";
 import { NotificationBarType } from "@/lib/types";
+import { Cancel, Delete } from "@mui/icons-material";
 import {
   Dialog,
   DialogTitle,
@@ -9,6 +10,8 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -20,6 +23,7 @@ const DeleteTaskDialog = ({
   boardId,
   onClose,
 }: DeleteTaskFormInputType) => {
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -79,25 +83,45 @@ const DeleteTaskDialog = ({
           },
         }}
       >
-        <DialogTitle>Delete Task</DialogTitle>
+        <DialogTitle component="h6" sx={{ textAlign: "center" }}>
+          Delete Task
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ ...theme.typography.body2 }}>
             This action cannot be undone. Are you sure you want to delete the
             task?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} disabled={mutation.isPending}>
-            Cancel
-          </Button>
+        <DialogActions
+          sx={{
+            justifyContent: "space-between",
+            flexDirection: "row",
+            px: 3,
+            mb: 2,
+          }}
+        >
           <Button
             onClick={handleDelete}
-            color="error"
+            sx={{ backgroundColor: theme.palette.primary.main }}
             variant="contained"
             autoFocus
             disabled={mutation.isPending}
+            startIcon={<Delete />}
           >
             {mutation.isPending ? "Deleting..." : "Delete"}
+          </Button>
+          <Button
+            onClick={handleDialogClose}
+            disabled={mutation.isPending}
+            endIcon={<Cancel />}
+            sx={{
+              borderWidth: 1,
+              borderColor: "#FF6D00",
+              borderStyle: "solid",
+              color: "#FF6D00",
+            }}
+          >
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

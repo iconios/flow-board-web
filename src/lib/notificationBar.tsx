@@ -3,6 +3,7 @@
 import { SnackbarCloseReason, Snackbar } from "@mui/material";
 import { SyntheticEvent, useEffect, useState } from "react";
 import { NotificationBarType } from "./types";
+import theme from "./theme";
 
 const NotificationBar = ({ message, messageType }: NotificationBarType) => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -38,6 +39,7 @@ const NotificationBar = ({ message, messageType }: NotificationBarType) => {
         "& .MuiSnackbarContent-message": {
           color: "white",
           padding: "8px 0",
+          ...theme.typography.caption,
         },
       }}
     />

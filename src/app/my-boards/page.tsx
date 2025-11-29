@@ -71,7 +71,7 @@ const BoardsPage = () => {
   // UI elements to display when there are boards
   if (boards && boards.length > 0) {
     return (
-      <Container>
+      <Container sx={{ marginBottom: { xs: 16, sm: 12 } }}>
         <CreateBoardButton />
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>

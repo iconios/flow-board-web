@@ -1,7 +1,8 @@
 "use client";
-import { Box, Container, Typography, Stack } from "@mui/material";
+import { Box, Container, Typography, Stack, useTheme } from "@mui/material";
 
-const Footer = () => {
+const Footer = ({ xs, sm, md }: { xs: string; sm: string; md: string }) => {
+  const theme = useTheme();
   return (
     <Box
       component="footer"
@@ -11,6 +12,10 @@ const Footer = () => {
         borderColor: "divider",
         py: 3,
         mt: 4,
+        marginTop: 2,
+        position: "fixed",
+        bottom: 0,
+        width: { xs, sm, md },
       }}
     >
       <Container maxWidth="xl">
@@ -21,7 +26,7 @@ const Footer = () => {
           alignItems="center"
         >
           <Typography
-            variant="body2"
+            variant="overline"
             color="text.secondary"
             sx={{ textAlign: { xs: "center", sm: "left" } }}
           >
@@ -30,7 +35,7 @@ const Footer = () => {
 
           <Stack direction="row" spacing={3}>
             <Typography
-              variant="body2"
+              variant="overline"
               color="text.secondary"
               sx={{
                 "&:hover": { color: "primary.main", cursor: "pointer" },
@@ -39,7 +44,7 @@ const Footer = () => {
               Privacy
             </Typography>
             <Typography
-              variant="body2"
+              variant="overline"
               color="text.secondary"
               sx={{
                 "&:hover": { color: "primary.main", cursor: "pointer" },
@@ -48,7 +53,7 @@ const Footer = () => {
               Terms
             </Typography>
             <Typography
-              variant="body2"
+              variant="overline"
               color="text.secondary"
               sx={{
                 "&:hover": { color: "primary.main", cursor: "pointer" },

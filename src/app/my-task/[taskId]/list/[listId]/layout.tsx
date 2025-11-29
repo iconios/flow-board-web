@@ -1,14 +1,18 @@
-import Footer from "@/components/footer";
-import NavBar from "@/components/NavBar";
+"use client";
+import InAppFooter from "@/components/InAppFooter";
+import InAppHeader from "@/components/InAppHeader";
 import { SocketProvider } from "@/lib/socketProvider";
 import React from "react";
+import secureLocalStorage from "react-secure-storage";
 
 const TaskLayout = ({ children }: { children: React.ReactNode }) => {
+  const pathname = secureLocalStorage.getItem("previousUrl");
+  console.log("Last Segment", pathname);
   return (
     <SocketProvider>
-      <NavBar />
+      <InAppHeader title={"Task"} backView={true} backRoute={`${pathname}`} />
       {children}
-      <Footer />
+      <InAppFooter xs={"100%"} sm={"100%"} md={"100%"} />
     </SocketProvider>
   );
 };

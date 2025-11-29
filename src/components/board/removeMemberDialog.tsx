@@ -7,6 +7,7 @@ import {
 } from "@/lib/member.types";
 import NotificationBar from "@/lib/notificationBar";
 import { NotificationBarType } from "@/lib/types";
+import { Cancel, Remove } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -15,7 +16,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Typography,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -27,6 +28,7 @@ const RemoveMemberDialog = ({
   dialogOpen,
   onClose,
 }: RemoveMemberDialogInputType) => {
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -76,24 +78,45 @@ const RemoveMemberDialog = ({
         />
       )}
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>Board Membership Removal</DialogTitle>
+        <DialogTitle component="h6" sx={{ textAlign: "center" }}>
+          Board Membership Removal
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            <Typography>
-              Are you sure you want to remove {memberName} from this board?
-            </Typography>
+          <DialogContentText
+            sx={{ fontWeight: 300, ...theme.typography.body2 }}
+          >
+            Are you sure you want to remove {memberName} from this board?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button disabled={mutation.isPending} onClick={handleCloseDialog}>
-            Cancel
-          </Button>
+        <DialogActions
+          sx={{
+            justifyContent: "space-between",
+            flexDirection: "row",
+            px: 3,
+            mb: 2,
+          }}
+        >
           <Button
             variant="contained"
+            color="primary"
             onClick={() => handleRemoval({ memberId, boardId })}
             disabled={mutation.isPending}
+            startIcon={<Remove />}
           >
             {mutation.isPending ? "Removing..." : "Remove"}
+          </Button>
+          <Button
+            disabled={mutation.isPending}
+            onClick={handleCloseDialog}
+            endIcon={<Cancel />}
+            sx={{
+              color: "#FF6D00",
+              borderColor: "#FF6D00",
+              borderWidth: 1,
+              borderStyle: "solid",
+            }}
+          >
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

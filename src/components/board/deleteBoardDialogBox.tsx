@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ const DeleteBoardDialogBox = ({
   boardId,
   onClose,
 }: DeleteBoardInputType) => {
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -80,9 +82,11 @@ const DeleteBoardDialogBox = ({
           },
         }}
       >
-        <DialogTitle>Delete Board</DialogTitle>
+        <DialogTitle component="h6" sx={{ textAlign: "center" }}>
+          Delete Board
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ ...theme.typography.body2 }}>
             This action cannot be undone. All the lists and the tasks in the
             board will also be deleted. Are you sure you want to delete the
             board?

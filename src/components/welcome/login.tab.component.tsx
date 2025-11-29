@@ -12,6 +12,7 @@ import {
   Stack,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import {
@@ -32,6 +33,7 @@ import LoginTabSkeleton from "../skeletons/loginTabSkeleton";
 
 const LoginTabPanel = () => {
   // 1. Initialize all variables or constants
+  const theme = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
@@ -127,6 +129,19 @@ const LoginTabPanel = () => {
             required
             id="email"
             name="email"
+            size="small"
+            slotProps={{
+              inputLabel: {
+                style: {
+                  ...theme.typography.body2,
+                },
+              },
+              input: {
+                style: {
+                  ...theme.typography.body2,
+                },
+              },
+            }}
             variant="outlined"
             value={formik.values.email}
             onChange={formik.handleChange}
@@ -142,6 +157,7 @@ const LoginTabPanel = () => {
             id="password"
             name="password"
             variant="outlined"
+            size="small"
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -161,6 +177,16 @@ const LoginTabPanel = () => {
                     </IconButton>
                   </InputAdornment>
                 ),
+                sx: {
+                  ...theme.typography.body2,
+                  backgroundColor: "transparent",
+                  color: "black",
+                },
+              },
+              inputLabel: {
+                style: {
+                  ...theme.typography.body2,
+                },
               },
             }}
           />
@@ -170,7 +196,7 @@ const LoginTabPanel = () => {
           <Typography
             color="primary"
             align="right"
-            variant="body2"
+            variant="overline"
             component="p"
             sx={{ py: 2 }}
           >
@@ -183,7 +209,7 @@ const LoginTabPanel = () => {
           color="primary"
           variant="contained"
           fullWidth
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, py: 1 }}
         >
           Sign In
         </Button>

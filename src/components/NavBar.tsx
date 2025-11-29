@@ -2,11 +2,9 @@
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   Box,
   Container,
-  Stack,
   IconButton,
   Menu,
   MenuItem,
@@ -17,6 +15,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import Link from "next/link";
 import { useUserContext } from "@/lib/user.context";
+import Image from "next/image";
 
 const NavBar = () => {
   const { user, LogOut } = useUserContext();
@@ -50,6 +49,7 @@ const NavBar = () => {
       sx={{
         backgroundColor: "white",
         color: "text.primary",
+        paddingY: 1,
       }}
     >
       <Container maxWidth="xl" disableGutters>
@@ -60,90 +60,20 @@ const NavBar = () => {
           }}
         >
           {/* Left Cluster: Nerdy Logo + Title */}
-          <Stack direction="row" spacing={1.5} alignItems="center">
-            {/* Nerdy Logo (text-based) */}
-            <Box
-              aria-label="Nerdy logo"
-              component={Link}
-              href="/"
-              sx={{
-                px: { xs: 1, sm: 1.25 },
-                py: 0.5,
-                borderRadius: 1,
-                border: "1px solid",
-                borderColor: "divider",
-                fontWeight: 800,
-                letterSpacing: 1,
-                fontSize: { xs: "0.8rem", sm: "0.9rem" },
-                textDecoration: "none",
-              }}
-            >
-              NERDY
-            </Box>
-
-            {/* Title: Nerdy Flow Board */}
-            <Typography
-              variant="h6"
-              noWrap
-              sx={{
-                fontWeight: 700,
-                display: { xs: "none", sm: "block" },
-                fontSize: { sm: "1.1rem", md: "1.25rem" },
-              }}
-            >
-              Flow Board
-            </Typography>
-          </Stack>
+          <Box aria-label="Nerdy logo" component={Link} href="/">
+            <Image
+              src="/logo.png"
+              alt="FlowBoard Logo"
+              height={40}
+              width={200}
+            />
+          </Box>
 
           {/* Flexible Spacer */}
           <Box sx={{ flexGrow: 1 }} />
 
           {/* Right Cluster: Boards and Login buttons */}
-          {!isMobile ? (
-            /* Desktop View */
-            <Box>
-              <Stack direction="row" spacing={2}>
-                <Box
-                  display={user.id ? "block" : "none"}
-                  component={Link}
-                  href="/my-boards"
-                >
-                  <Button
-                    size="small"
-                    title="my-boards button"
-                    sx={{
-                      color: "primary.contrastText",
-                      textTransform: "none",
-                      fontWeight: 600,
-                      bgcolor: "primary.main",
-                      ":hover": { bgcolor: "primary.dark" },
-                      fontSize: { sm: "0.9rem", md: "1rem" },
-                      px: 3,
-                    }}
-                  >
-                    Boards
-                  </Button>
-                </Box>
-                <Box component={Link} href="/welcome">
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{
-                      textTransform: "none",
-                      fontWeight: 600,
-                      bgcolor: "primary.main",
-                      ":hover": { bgcolor: "primary.dark" },
-                      fontSize: { sm: "0.9rem", md: "1rem" },
-                      px: 3,
-                    }}
-                    onClick={user ? handleLogout : handleLogin}
-                  >
-                    {user.id ? "Logout" : "Login"}
-                  </Button>
-                </Box>
-              </Stack>
-            </Box>
-          ) : (
+          {isMobile ? (
             /* Mobile View */
             <Box>
               <IconButton
@@ -172,25 +102,6 @@ const NavBar = () => {
                 }}
               >
                 <MenuItem
-                  sx={{ p: 0, display: user.id ? "block" : "none", mb: 0.5 }}
-                >
-                  <Button
-                    variant="text"
-                    title="my-boards button"
-                    LinkComponent={Link}
-                    href="/my-boards"
-                    sx={{
-                      bgcolor: "primary.main",
-                      color: "primary.contrastText",
-                      ":hover": { bgcolor: "primary.dark" },
-                      m: 0,
-                      width: "100%",
-                    }}
-                  >
-                    Boards
-                  </Button>
-                </MenuItem>
-                <MenuItem
                   onClick={user.id ? handleLogout : handleLogin}
                   sx={{ p: 0 }}
                   LinkComponent={Link}
@@ -209,6 +120,28 @@ const NavBar = () => {
                   </Button>
                 </MenuItem>
               </Menu>
+            </Box>
+          ) : (
+            /* Desktop View */
+            <Box>
+              <Box component={Link} href="/welcome">
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 600,
+                    bgcolor: "primary.main",
+                    ":hover": { bgcolor: "primary.dark" },
+                    fontSize: { sm: "0.9rem", md: "1rem" },
+                    px: 3,
+                    py: 1.5,
+                  }}
+                  onClick={user ? handleLogout : handleLogin}
+                >
+                  {user.id ? "Logout" : "Login"}
+                </Button>
+              </Box>
             </Box>
           )}
         </Toolbar>

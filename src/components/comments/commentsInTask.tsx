@@ -12,6 +12,8 @@ import {
   Skeleton,
   Stack,
   TextField,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import CommentContent from "./commentContent";
@@ -28,9 +30,11 @@ import NotificationBar from "@/lib/notificationBar";
 import { Cancel, Create } from "@mui/icons-material";
 
 const CommentsInTask = ({ taskId }: { taskId: string }) => {
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
+  const bodyStyle = { ...theme.typography.body2 };
   const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["comments", `comments:${taskId}`],
@@ -114,6 +118,15 @@ const CommentsInTask = ({ taskId }: { taskId: string }) => {
             label="Comments"
             id="content"
             name="content"
+            size="small"
+            slotProps={{
+              inputLabel: {
+                sx: bodyStyle,
+              },
+              input: {
+                sx: bodyStyle,
+              },
+            }}
             variant="outlined"
             value={formik.values.content}
             onChange={formik.handleChange}
@@ -135,7 +148,13 @@ const CommentsInTask = ({ taskId }: { taskId: string }) => {
             <Button
               type="reset"
               onClick={() => formik.resetForm()}
-              startIcon={<Cancel />}
+              sx={{
+                color: "#FF6D00",
+                borderColor: "#FF6D00",
+                borderWidth: 1,
+                borderStyle: "solid",
+              }}
+              endIcon={<Cancel />}
               variant="outlined"
               disabled={formik.isSubmitting || !formik.values.content.trim()}
             >
@@ -145,7 +164,7 @@ const CommentsInTask = ({ taskId }: { taskId: string }) => {
         </Stack>
       </Box>
       {comments?.length === 0 ? (
-        <p>No comments yet - create one!</p>
+        <Typography variant="body2">No comments yet - create one!</Typography>
       ) : (
         <List sx={{ width: "100%", maxWidth: 600 }}>
           {comments?.map((comment) => (

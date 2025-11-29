@@ -7,6 +7,7 @@ import {
 } from "@/lib/comment.types";
 import NotificationBar from "@/lib/notificationBar";
 import { NotificationBarType } from "@/lib/types";
+import { Cancel, Delete } from "@mui/icons-material";
 import {
   Button,
   Dialog,
@@ -14,6 +15,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -24,6 +27,7 @@ const DeleteCommentDialog = ({
   commentId,
   onClose,
 }: DeleteCommentDialogInputType) => {
+  const theme = useTheme();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
@@ -87,24 +91,44 @@ const DeleteCommentDialog = ({
           },
         }}
       >
-        <DialogTitle>Delete Comment</DialogTitle>
+        <DialogTitle component="h6" sx={{ textAlign: "center" }}>
+          Delete Comment
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ ...theme.typography.body2 }}>
             Are you sure you want to delete the comment?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} disabled={mutation.isPending}>
-            Cancel
-          </Button>
+        <DialogActions
+          sx={{
+            justifyContent: "space-between",
+            flexDirection: "row",
+            mb: 2,
+            px: 3,
+          }}
+        >
           <Button
             onClick={handleDelete}
-            color="error"
+            color="primary"
             variant="contained"
             autoFocus
             disabled={mutation.isPending}
+            startIcon={<Delete />}
           >
             {mutation.isPending ? "Deleting..." : "Delete"}
+          </Button>
+          <Button
+            onClick={handleDialogClose}
+            disabled={mutation.isPending}
+            endIcon={<Cancel />}
+            sx={{
+              color: "#FF6D00",
+              borderColor: "#FF6D00",
+              borderWidth: 1,
+              borderStyle: "solid",
+            }}
+          >
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

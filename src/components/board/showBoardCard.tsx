@@ -127,7 +127,7 @@ const BoardCard = ({
                 }}
               >
                 <Typography
-                  variant={isMobile ? "subtitle2" : "subtitle1"}
+                  variant="body2"
                   component="h3"
                   sx={{
                     fontWeight: 600,
@@ -140,16 +140,17 @@ const BoardCard = ({
                   {title}
                 </Typography>
                 <Typography
-                  variant={isMobile ? "caption" : "body2"}
+                  variant="body2"
                   color="text.secondary"
                   sx={{
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                     lineHeight: 1.2,
+                    fontSize: 14,
                   }}
                 >
-                  {userName}
+                  Board Owner - {userName}
                 </Typography>
               </Box>
             </Link>

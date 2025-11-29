@@ -14,6 +14,7 @@ import {
   MenuItem,
   Button,
   Divider,
+  useTheme,
 } from "@mui/material";
 import { FormikHelpers, useFormik } from "formik";
 import { useState } from "react";
@@ -22,6 +23,7 @@ import RemoveMemberDialog from "./removeMemberDialog";
 import { useUserContext } from "@/lib/user.context";
 
 const MemberUI = ({ member }: MemberType) => {
+  const theme = useTheme();
   const [openDialog, setOpenDialog] = useState(false);
   const { user } = useUserContext();
 
@@ -55,36 +57,59 @@ const MemberUI = ({ member }: MemberType) => {
             <ListItemAvatar>
               <Avatar>{firstAlphabet}</Avatar>
             </ListItemAvatar>
-            <ListItemText primary={member.user.firstname}></ListItemText>
+            <ListItemText
+              primary={member.user.firstname}
+              sx={{
+                "& .MuiListItemText-primary": {
+                  ...theme.typography.body2,
+                },
+              }}
+            />
           </Stack>
           <form>
             <Stack direction="row">
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Role</InputLabel>
+                <InputLabel
+                  id="demo-simple-select-label"
+                  sx={{ ...theme.typography.body2 }}
+                >
+                  Role
+                </InputLabel>
                 <Select
                   type="text"
                   label="Role"
                   id="role"
                   name="role"
                   variant="outlined"
+                  size="small"
+                  slotProps={{
+                    input: {
+                      sx: {
+                        ...theme.typography.body2,
+                      },
+                    },
+                  }}
                   value={formik.values.role}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={formik.touched.role && Boolean(formik.errors.role)}
                   disabled={user.id !== member.boardOwnerUserId}
                 >
-                  <MenuItem value="member">Member</MenuItem>
-                  <MenuItem value="admin">Admin</MenuItem>
+                  <MenuItem value="member" sx={{ ...theme.typography.body2 }}>
+                    Member
+                  </MenuItem>
+                  <MenuItem value="admin" sx={{ ...theme.typography.body2 }}>
+                    Admin
+                  </MenuItem>
                 </Select>
               </FormControl>
               <Button
                 variant="text"
-                startIcon={<Remove />}
                 onClick={() => setOpenDialog(true)}
                 sx={{
                   ml: 2,
                   display:
-                    user.id !== member.boardOwnerUserId ? "none" : "block",
+                    user.id === member.boardOwnerUserId ? "block" : "none",
                 }}
               >
                 Remove

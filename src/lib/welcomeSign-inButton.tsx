@@ -12,7 +12,12 @@ const WelcomeSignInButton = () => {
         variant="contained"
         color="primary"
         size="large"
-        sx={{ maxWidth: "sm" }}
+        sx={{
+          width: { xs: "100%" },
+          maxWidth: { sm: "sm" },
+          paddingX: 2,
+          height: 48,
+        }}
       >
         {user.id ? "Go to My Boards" : "Get Started / Sign In"}
       </Button>

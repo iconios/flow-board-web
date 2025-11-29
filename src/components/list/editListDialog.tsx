@@ -7,6 +7,7 @@ import {
 } from "@/lib/list.types";
 import NotificationBar from "@/lib/notificationBar";
 import { NotificationBarType } from "@/lib/types";
+import { Cancel, Edit } from "@mui/icons-material";
 import {
   Dialog,
   DialogTitle,
@@ -20,6 +21,8 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { FormikHelpers, useFormik } from "formik";
@@ -36,6 +39,7 @@ const EditListDialog = ({
   onClose,
 }: EditListFormType) => {
   // Initialize the variables and constants
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
@@ -45,6 +49,8 @@ const EditListDialog = ({
     onClose();
     setNotification(null);
   };
+
+  const bodyStyle = { ...theme.typography.body2 };
 
   const initialValues = useMemo(() => {
     return {
@@ -132,9 +138,14 @@ const EditListDialog = ({
           py: 1,
         }}
       >
-        <DialogTitle>Edit List</DialogTitle>
+        <DialogTitle component="h6" sx={{ textAlign: "center" }}>
+          Edit List
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText paddingBottom={2}>
+          <DialogContentText
+            paddingBottom={2}
+            sx={{ ...theme.typography.body2 }}
+          >
             Enter the list fields values
           </DialogContentText>
           <form onSubmit={formik.handleSubmit}>
@@ -146,6 +157,15 @@ const EditListDialog = ({
                 id="title"
                 name="title"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 value={formik.values.title}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -154,20 +174,32 @@ const EditListDialog = ({
               />
 
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                <InputLabel id="demo-simple-select-label" sx={bodyStyle}>
+                  Status
+                </InputLabel>
                 <Select
                   type="text"
                   label="Status"
                   id="status"
                   name="status"
                   variant="outlined"
+                  size="small"
+                  slotProps={{
+                    input: {
+                      sx: bodyStyle,
+                    },
+                  }}
                   value={formik.values.status}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={formik.touched.status && Boolean(formik.errors.status)}
                 >
-                  <MenuItem value="active">active</MenuItem>
-                  <MenuItem value="archive">archive</MenuItem>
+                  <MenuItem value="active" sx={bodyStyle}>
+                    active
+                  </MenuItem>
+                  <MenuItem value="archive" sx={bodyStyle}>
+                    archive
+                  </MenuItem>
                 </Select>
               </FormControl>
 
@@ -177,6 +209,15 @@ const EditListDialog = ({
                 id="position"
                 name="position"
                 variant="outlined"
+                size="small"
+                slotProps={{
+                  inputLabel: {
+                    sx: bodyStyle,
+                  },
+                  input: {
+                    sx: bodyStyle,
+                  },
+                }}
                 value={formik.values.position}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -187,28 +228,29 @@ const EditListDialog = ({
               />
             </Stack>
 
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-              <DialogActions>
-                <Button
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  disabled={isPending}
-                >
-                  {isPending ? "Editing..." : "Edit"}
-                </Button>
-                <Button
-                  color="secondary"
-                  variant="outlined"
-                  sx={{ mt: 2 }}
-                  onClick={handleDialogClose}
-                  disabled={isPending}
-                >
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Stack>
+            <DialogActions
+              sx={{ justifyContent: "space-between", flexDirection: "row" }}
+            >
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                sx={{ mt: 2 }}
+                disabled={isPending}
+                startIcon={<Edit />}
+              >
+                {isPending ? "Editing..." : "Edit"}
+              </Button>
+              <Button
+                variant="outlined"
+                sx={{ mt: 2, color: "#FF6D00", borderColor: "#FF6D00" }}
+                onClick={handleDialogClose}
+                disabled={isPending}
+                endIcon={<Cancel />}
+              >
+                Cancel
+              </Button>
+            </DialogActions>
           </form>
         </DialogContent>
       </Dialog>
