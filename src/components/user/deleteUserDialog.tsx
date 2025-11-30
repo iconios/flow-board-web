@@ -71,7 +71,13 @@ const DeleteUserDialog = ({
             comments and board members associated with your account. Are you
             sure you want to delete your user account?
           </DialogContentText>
-          <DialogActions sx={{ display: "flex", justifyContent: "space-between", flexDirection: "row" }}>
+          <DialogActions
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: "row",
+            }}
+          >
             <Button
               startIcon={<Delete />}
               color="primary"
