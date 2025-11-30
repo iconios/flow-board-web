@@ -18,9 +18,9 @@ const PrivacyLayout = ({ children }: { children: React.ReactNode }) => {
   }, [user]);
 
   return (
-    <Container>
+    <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 10 } }}>
       <InAppHeader
-        title={"Privacy Notice"}
+        title={"Privacy Policy"}
         backView={true}
         backRoute={userDetails ? "/profile" : "/welcome"}
       />

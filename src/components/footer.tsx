@@ -1,9 +1,8 @@
 "use client";
-import { Box, Container, Typography, Stack, useTheme } from "@mui/material";
+import { Box, Container, Typography, Stack } from "@mui/material";
 import Link from "next/link";
 
 const Footer = ({ xs, sm, md }: { xs: string; sm: string; md: string }) => {
-  const theme = useTheme();
   return (
     <Box
       component="footer"

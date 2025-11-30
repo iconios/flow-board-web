@@ -44,4 +44,44 @@ const GetUserServerAction = async (email: string) => {
   }
 };
 
-export default GetUserServerAction;
+// Delete User Service
+/*
+#Plan: 
+1. Get the token
+2. Call the API and pass the token
+3. Return result to client
+*/
+const DeleteUserServerAction = async () => {
+  // 1. Get the token
+  const token = (await cookies()).get("token")?.value ?? "";
+  validateServerUrlAndToken(token);
+
+  try {
+    // 2. Call the API and pass the token
+    const response = await fetch(`${SERVER_BASE_URL}/user/delete`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result: { success: boolean; message: string } = await response.json();
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+
+    // 3. Return result to client
+    return {
+      message: result.message,
+    };
+  } catch (error) {
+    console.error("Error deleting user", error);
+
+    if (error instanceof Error) throw error;
+
+    throw new Error("Error deleting user");
+  }
+};
+
+export { DeleteUserServerAction, GetUserServerAction };

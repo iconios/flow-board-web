@@ -62,7 +62,7 @@ const NavBar = () => {
             px: { xs: 2, sm: 3, md: 4 },
           }}
         >
-          {/* Left Cluster: Nerdy Logo + Title */}
+          {/* Left Cluster: Nerdy Logo */}
           <Box aria-label="Nerdy logo" component={Link} href="/">
             <Image
               src="/logo.png"

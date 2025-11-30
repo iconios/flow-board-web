@@ -17,7 +17,7 @@ const TermsLayout = ({ children }: { children: React.ReactNode }) => {
     }
   }, [user]);
   return (
-    <Container>
+    <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 10 } }}>
       <InAppHeader
         title={"Terms of Service"}
         backView={true}

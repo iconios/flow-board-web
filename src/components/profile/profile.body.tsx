@@ -6,23 +6,29 @@ import { useUserContext } from "@/lib/user.context";
 import { Box, Button, useTheme } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import DeleteUserDialog from "../user/deleteUserDialog";
 
 const ProfileBody = () => {
+  // Initialize required variables and constants
   const theme = useTheme();
   const router = useRouter();
   const [notification, setNotification] = useState<NotificationBarType | null>(
     null,
   );
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { LogOut } = useUserContext();
 
-  const handleLogout = () => {
+  // Handle logout button and successful account deletion
+  const handleLogout = (message?: string) => {
     setNotification({
-      message: "Bye!",
+      message: message ?? "Bye!",
       messageType: "success",
     });
+    setOpenDeleteDialog(false);
     LogOut();
     router.replace("/welcome");
   };
+
   return (
     <Box
       sx={{
@@ -73,7 +79,7 @@ const ProfileBody = () => {
         Terms of Service
       </Button>
       <Button
-        onClick={() => {}}
+        onClick={() => setOpenDeleteDialog(true)}
         sx={{
           borderBottom: "1px gray solid",
           borderLeft: "1px gray solid",
@@ -92,10 +98,17 @@ const ProfileBody = () => {
           alignSelf: "center",
           py: 1,
         }}
-        onClick={handleLogout}
+        onClick={() => handleLogout()}
       >
         Log out
       </Button>
+      {openDeleteDialog && (
+        <DeleteUserDialog
+          open={openDeleteDialog}
+          onClose={() => setOpenDeleteDialog(false)}
+          onSuccess={handleLogout}
+        />
+      )}
     </Box>
   );
 };

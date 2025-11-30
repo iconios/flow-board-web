@@ -16,18 +16,18 @@ const Banner = ({ setFeatures }: { setFeatures: () => void }) => {
       }}
     >
       <Typography variant="h3" sx={{ textAlign: "center", fontWeight: "500" }}>
-        Your hub for{" "}
+        Unleash your project management team's{" "}
         <Typography
           component="span"
           sx={{
-            ...theme.typography.h1,
+            ...theme.typography.h3,
             color: theme.palette.primary.main,
             fontWeight: "700",
           }}
         >
           seamless
         </Typography>{" "}
-        team collaboration and project management
+        collaboration
       </Typography>
       <Typography
         sx={{
@@ -37,7 +37,8 @@ const Banner = ({ setFeatures }: { setFeatures: () => void }) => {
           paddingTop: 2,
         }}
       >
-        Streamline your team's workflow today across all devices
+        FlowBoard: Your one-stop shop to streamline your team's workflow today
+        across all devices
       </Typography>
       <Box
         sx={{
