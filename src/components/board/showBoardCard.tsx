@@ -1,0 +1,253 @@
+// Each board display
+
+import { BoardCardType } from "@/lib/types";
+import { Delete, Edit, MoreVert } from "@mui/icons-material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+  Link,
+  Grid,
+} from "@mui/material";
+import { useState } from "react";
+import EditBoardDialogBox from "./editBoardDialogBox";
+import DeleteBoardDialogBox from "./deleteBoardDialogBox";
+import { useUserContext } from "@/lib/user.context";
+
+const BoardCard = ({
+  bg_color,
+  userName,
+  title,
+  boardId,
+  boardUserId,
+}: BoardCardType) => {
+  // 1. Initialize the variables or constants
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const theme = useTheme();
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { user } = useUserContext();
+
+  // Handler for the Vertical More button click
+  const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Handler for Menu close
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Handler to close dialog box
+  const handleCloseDialog = () => {
+    setOpenEditDialog(false);
+    setOpenDeleteDialog(false);
+  };
+
+  // Handler for Edit button click
+  const handleEditClick = () => {
+    setOpenEditDialog(true);
+    handleMenuClose();
+  };
+
+  // Handler for Delete button click
+  const handleDeleteClick = () => {
+    setOpenDeleteDialog(true);
+    handleMenuClose();
+  };
+
+  const encodedBg = encodeURIComponent(bg_color);
+  return (
+    // Container for each Board card
+    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+      <Card
+        sx={{
+          transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+          "&:hover": {
+            transform: "translateY(-4px)",
+            boxShadow: theme.shadows[4],
+          },
+          minHeight: { xs: 140, sm: 160 },
+        }}
+      >
+        {/* Color Header */}
+        <Link
+          href={`/my-lists/${boardId}?t=${title}&bg=${encodedBg}&uid=${boardUserId}`}
+          key={boardId}
+          style={{ textDecoration: "none" }}
+        >
+          <CardMedia
+            sx={{
+              height: { xs: 50, sm: 80 },
+              backgroundColor: bg_color,
+              flexShrink: 0,
+            }}
+          />
+        </Link>
+
+        {/* Content Area */}
+        <CardContent
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: "column",
+            p: { xs: 1.5, sm: 2 },
+            "&:last-child": {
+              pb: { xs: 1.5, sm: 2 },
+            },
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              flexGrow: 1,
+              gap: 1,
+            }}
+          >
+            {/* Text Content */}
+            <Link
+              href={`/my-lists/${boardId}?t=${title}&bg=${encodedBg}&uid=${boardUserId}`}
+              key={boardId}
+              style={{ textDecoration: "none" }}
+            >
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  minWidth: 0, // Enables text truncation
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  component="h3"
+                  sx={{
+                    fontWeight: 600,
+                    mb: 0.5,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    lineHeight: 1.2,
+                    fontSize: 14,
+                  }}
+                >
+                  Board Owner - {userName}
+                </Typography>
+              </Box>
+            </Link>
+
+            {/* Menu Button */}
+            <Box
+              sx={{
+                flexShrink: 0,
+                ml: 1,
+                display: boardUserId === user.id ? "block" : "none",
+              }}
+            >
+              <IconButton
+                onClick={handleMoreClick}
+                size="medium"
+                sx={{
+                  padding: { xs: "4px", sm: "8px" },
+                  "&:hover": {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                }}
+              >
+                <MoreVert fontSize="medium" />
+              </IconButton>
+            </Box>
+          </Box>
+        </CardContent>
+
+        {/* Menu */}
+        <Menu
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          slotProps={{
+            paper: {
+              sx: {
+                mt: 1,
+                minWidth: { xs: 120, sm: 140 },
+              },
+            },
+          }}
+        >
+          <MenuItem
+            onClick={handleEditClick}
+            sx={{
+              py: { xs: 1, sm: 1.5 },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
+            }}
+          >
+            <Edit
+              sx={{
+                fontSize: { xs: "1rem", sm: "1.25rem" },
+                mr: 1.5,
+                color: "text.secondary",
+              }}
+            />
+            Edit board
+          </MenuItem>
+          <MenuItem
+            onClick={handleDeleteClick}
+            sx={{
+              py: { xs: 1, sm: 1.5 },
+              fontSize: { xs: "0.875rem", sm: "1rem" },
+              color: "error.main",
+            }}
+          >
+            <Delete
+              sx={{
+                fontSize: { xs: "1rem", sm: "1.25rem" },
+                mr: 1.5,
+                color: "error.main",
+              }}
+            />
+            Delete board
+          </MenuItem>
+        </Menu>
+      </Card>
+      <EditBoardDialogBox
+        dialogOpen={openEditDialog}
+        title={title}
+        bg_color={bg_color}
+        boardId={boardId}
+        onClose={handleCloseDialog}
+      />
+      <DeleteBoardDialogBox
+        dialogOpen={openDeleteDialog}
+        boardId={boardId}
+        onClose={handleCloseDialog}
+      />
+    </Grid>
+  );
+};
+
+export default BoardCard;
