@@ -21,7 +21,7 @@ const SignUpServerAction = async ({
   password,
 }: RegisterFormValuesType): Promise<SignUpAuthOutputType> => {
   if (!SERVER_BASE_URL) {
-    throw new Error("Server Url required");
+    throw new Error("Server Url is required");
   }
 
   try {
