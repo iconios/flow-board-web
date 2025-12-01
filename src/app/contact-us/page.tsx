@@ -75,7 +75,7 @@ const ContactPage = () => {
               Nerdy Web Consults
             </Typography>
             <Typography variant="body2" sx={{ fontWeight: "200" }}>
-              Dynamic web development agency for Africa's startups and SMEs.
+              A dynamic web development agency for Africa's startups and SMEs.
             </Typography>
           </Grid>
           <Grid size={gridSize} sx={gridStyle}>
